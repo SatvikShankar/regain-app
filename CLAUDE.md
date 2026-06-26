@@ -11,7 +11,7 @@ Screen-level detail (layout, content, connections, aesthetic) lives in `SCREENS.
 ## Tech stack (fixed)
 - React Native + Expo, **TypeScript**
 - AsyncStorage for local persistence — no backend, no server, no accounts/auth
-- Testing via Expo Go on Android (Samsung S24+); SDK must match the installed Expo Go version (was SDK 54 at setup)
+- Testing via Expo Go on Android (Samsung S24+); use Expo SDK 54 — this matches the installed Expo Go version
 - **Anthropic API, Claude Haiku model**, for two bounded post-intake calls (see AI Agent Flow). API key in `.env`, which must be in `.gitignore` before the key is ever written
 - No local model (would require a de facto backend)
 - If a backend is added later: separate repo (`regain-api`), not a monorepo
@@ -41,6 +41,7 @@ regain-app/
 ├── screens/                 → PascalCase, one screen per file
 ├── components/               → reusable UI pieces
 ├── navigation/
+
 └── utils/
     ├── aiAgentCalls.ts      → the two API calls + fallbacks
     ├── intakeEngine.ts      → generic tree-walking logic
@@ -66,7 +67,7 @@ regain-app/
 ### Back intake tree (built, locked)
 - **Q1 (shared):** diagnosed / seen-but-unclear / not-seen. No free text. Diagnosed → diagnosed branch; other two → undiagnosed branch.
 - **Diagnosed branch (5 q):** diagnosis (free-text only) → cleared for exercise? → pain location (lower/mid/upper/moves) → aggravating factors (flexion/extension/both/constant) → current pain (minimal/moderate/significant) → COMPLETE. No red-flag checklist (already professionally screened).
-- **Undiagnosed branch (6 q):** onset → pain location (+ "spreads into buttock/leg" option) → aggravating factors → **red-flag checklist** (multiselect; any non-"none" → detour; `bladderBowel` item carries `urgent` severity, all others `standard`) → daily limitation → COMPLETE.
+- **Undiagnosed branch (5 q):** onset → pain location (+ "spreads into buttock/leg" option) → aggravating factors → **red-flag checklist** (multiselect; any non-"none" → detour; `bladderBowel` item carries `urgent` severity, all others `standard`) → daily limitation → COMPLETE.
 
 ## AI Agent Flow (runs AFTER intake completes and red flags cleared)
 Two independent, parallel API calls (Claude Haiku). Neither needs the other's output. Both are bounded and non-conversational. NOT involved in red-flag detection (that already happened deterministically). Prompt text is to be drafted/refined by Satvik later — for now, implement the wiring, inputs, outputs, and fallbacks; placeholder prompts are fine.

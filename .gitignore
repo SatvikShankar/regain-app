@@ -4,3 +4,8 @@ dist/
 web-build/
 *.log
 .DS_Store
+
+# Secrets — keep the Anthropic API key out of git (CLAUDE.md hard rule).
+.env
+.env.local
+.env*.local

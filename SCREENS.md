@@ -23,8 +23,10 @@ Reference was a fitness-app Figma template, used for *vibe* only (its auth scree
 - Exact hex values: finalize visually on device during build, not pre-specified
 
 ## Navigation
-- **Bottom nav** (persistent on main screens): floating rounded bar, three items — **Home** (left), **"+" New Issue** (center, raised filled circle), **Programs** (right). No settings/profile (nothing to put there in an account-less MVP).
+- **Bottom nav (persistent on ALL screens)**: the floating rounded bar — Home, "+" center, Programs — should remain visible throughout the entire app, including intake, program, exercise detail, and check-in screens. The user wants the app to feel connected end-to-end, not sectioned. Implementation: move the tab navigator to wrap the root stack rather than the other way around, OR overlay the bar as a persistent component. Decide during Step 2 build.
+- **"+" New Issue** (center, raised filled circle): routes to Region Select from anywhere in the app.
 - Must fully support Android hardware/gesture back. Back mid-intake → previous question; back must never unexpectedly exit the app mid-flow.
+- **Screen transitions**: on Android, the current native stack slide shows a white flash at the edge during the transition. Fix before shipping: set `animation: 'fade'` or `animation: 'slide_from_right'` with matching background colors on every stack screen, or switch to a custom interpolated transition. Test carefully — the fix that works on Android may look wrong on the home→program card tap. Address in the polish pass (Step 7) but note it here so it is not forgotten.
 
 ---
 
@@ -59,7 +61,7 @@ One component renders the current question and advances through the tree (logic 
   - `multiSelect` (red-flag checklist) → checkable list
   - `freeTextOnly` (diagnosis) → text field
 - Free-text field present beneath options when allowed (most questions); absent on Q1
-- **Progress indicator**: after Q1 the branch (diagnosed=5 / undiagnosed=6) is known, so set the bar/dots to that branch's length and advance proportionally. An early red-flag exit simply ends the flow — the bar doesn't need to predict it.
+- **Progress indicator**: after Q1 the branch (diagnosed=5 / undiagnosed=5) is known, so set the bar/dots to that branch's length and advance proportionally. (Lengths are derived from the data, not hardcoded.) An early red-flag exit simply ends the flow — the bar doesn't need to predict it.
 - Smooth transitions between questions; the flow should *feel* conversational/calm, one thing at a time
 - Continue control (disabled until a required option is chosen on logic-driving questions; free-text-only questions require text); back control → previous question
 

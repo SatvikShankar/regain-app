@@ -145,6 +145,7 @@ export default function IntakeScreen() {
 
     if (next === RED_FLAG_DETOUR) {
       const { severity } = detectRedFlag(question, selectedOption);
+      if (__DEV__) console.log('[Regain] red flag →', severity ?? 'standard');
       navigation.navigate('RedFlagDetour', { severity: severity ?? 'standard' });
       return;
     }
@@ -160,6 +161,11 @@ export default function IntakeScreen() {
         };
       });
       const result = buildIntakeResult(region, questions, responses);
+      if (__DEV__) {
+        // Visible in the `npm start` terminal — the full IntakeResult that gets
+        // serialized as context for the AI calls.
+        console.log('[Regain] IntakeResult:', JSON.stringify(result, null, 2));
+      }
       navigation.navigate('Loading', { intakeResult: result });
       return;
     }

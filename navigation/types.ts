@@ -7,6 +7,7 @@
 // detour and detail/check-in screens) lives in the same stack.
 
 import { IntakeResult } from "../types/intake";
+import { StoredProgram } from "../types/program";
 
 export type RootStackParamList = {
   Home: undefined;
@@ -15,8 +16,11 @@ export type RootStackParamList = {
   Intake: { region: string };
   Loading: { intakeResult?: IntakeResult };
   RedFlagDetour: { severity?: "standard" | "urgent" };
-  Program: { programId?: string };
-  ExerciseDetail: { exerciseId?: string };
+  // Two ways to open the Program screen:
+  //   - previewProgram: a freshly generated, NOT-yet-saved program (post-intake)
+  //   - programId:      an already-saved program, loaded from storage
+  Program: { programId?: string; previewProgram?: StoredProgram };
+  ExerciseDetail: { exerciseId?: string; region?: string };
   CheckIn: { programId?: string };
 };
 

@@ -4,12 +4,17 @@
 
 import { NavigationContainer, DefaultTheme, Theme } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
+import * as SystemUI from 'expo-system-ui';
 import { useState } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import BottomNav from './components/BottomNav';
 import { colors } from './components/ScreenContainer';
 import RootNavigator from './navigation/RootNavigator';
 import { navigationRef } from './navigation/navigationRef';
+
+// Paint the native root view the warm-dark plum so screen transitions never
+// flash the default white window background at the edges (Satvik's report).
+SystemUI.setBackgroundColorAsync(colors.background);
 
 const navTheme: Theme = {
   ...DefaultTheme,

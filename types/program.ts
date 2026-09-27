@@ -6,14 +6,17 @@
 import { ExerciseSelection } from "./exercise";
 import { IntakeResult } from "./intake";
 
-// One check-in appended per logged session. Raw answers only — gating derives
-// unlock decisions from these (Step 5).
+export type PainLevel = 'none' | 'mild' | 'moderate' | 'significant';
+export type Difficulty = 'tooEasy' | 'aboutRight' | 'tooHard';
+
+// One check-in appended per logged session. Raw answers about the session just
+// done — gating INFERS unlock readiness from these (never a "ready?" toggle).
 export interface SessionLogEntry {
   date: string;              // ISO timestamp of the check-in
   level: number;             // level the session was logged against
-  painDuring: string;
-  painAfter: string;
-  readyToProgress: boolean;
+  painDuring: PainLevel;
+  painAfter: PainLevel;
+  difficulty: Difficulty;
 }
 
 export interface StoredProgram {

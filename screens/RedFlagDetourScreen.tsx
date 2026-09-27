@@ -11,7 +11,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import PrimaryButton from '../components/PrimaryButton';
-import { bottomNavClearance, colors } from '../components/ScreenContainer';
+import { screenBottomPadding, colors } from '../components/ScreenContainer';
 import { RootStackParamList } from '../navigation/types';
 
 export default function RedFlagDetourScreen() {
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 24,
     paddingTop: 32,
-    paddingBottom: bottomNavClearance,
+    paddingBottom: screenBottomPadding,
   },
   iconCircle: {
     width: 64,

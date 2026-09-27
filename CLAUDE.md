@@ -124,7 +124,7 @@ Key-value store, survives app closes. Store JS objects as JSON strings; read/par
   selectedExercises,             // from Call 2 — IDs only, full details looked up from data file at render
   currentLevel,
   unlockedLevels,                // [1..assignedStartLevel] at generation
-  sessionLog: [ { date, level, painDuring, painAfter, readyToProgress }, ... ]
+  sessionLog: [ { date, level, painDuring, painAfter, difficulty }, ... ]
 }
 ```
 - `selectedExercises` stores IDs only; full exercise content is always looked up from `backProgram.ts` at render, so content edits propagate to existing programs automatically and stored objects stay tiny (KBs even after heavy use)
@@ -132,15 +132,22 @@ Key-value store, survives app closes. Store JS objects as JSON strings; read/par
 - Red-flagged users: nothing is stored (no program object created).
 
 ## Progression gating (`utils/gating.ts`)
-A check-in = one entry appended to `sessionLog` (date + the 3 answers). Runs after every check-in. Duplicate same-day logs are allowed (eases demoing — lets a level be unlocked on the spot).
+A check-in = one entry appended to `sessionLog` (date + the 3 answers: painDuring, painAfter, difficulty). Runs after every check-in. Duplicate same-day logs are allowed (eases demoing — lets a level be unlocked on the spot).
 
-Unlock the next level when BOTH:
-- the most recent 2 check-ins for the current level report manageable pain (painDuring/painAfter within an acceptable set, e.g. "none"/"mild"), AND
-- the latest check-in has `readyToProgress = true`
+**Design principle:** readiness is INFERRED from behaviour, not asked as a speculative "are you ready?" toggle (users click yes blindly). The check-in only asks about the session just done. The app computes readiness from the log, then surfaces an *informed* opt-in offer only once the criteria are met — an earned confirmation, not a blind one.
 
-On satisfaction: append next level to `unlockedLevels`, optional "level unlocked" moment, write to storage. Both the check-in count (2) and the acceptable-pain set must be named constants at the top of the file — easily editable.
+Offer to unlock the next level when ALL hold (for the current level = highest unlocked):
+- at least `MIN_SESSIONS_AT_LEVEL` (3) sessions have been logged at this level, AND
+- the most recent `RECENT_WINDOW` (2) sessions report manageable pain — both painDuring and painAfter within `ACCEPTABLE_PAIN` ("none"/"mild"), AND
+- those same recent sessions report the level as `READY_DIFFICULTY` ("tooEasy") — an honest, retrospective signal that they've outgrown it.
 
-Gating only governs levels beyond `assignedStartLevel`. A user must affirmatively opt in (`readyToProgress`) — never force-advance.
+When met, present the offer ("you seem ready — move up to Level N?"). The user's tap is the affirmative opt-in — **never force-advance**. On accept: append next level to `unlockedLevels`, set `currentLevel`, show a "level unlocked" moment (warm accent), write to storage.
+
+All thresholds (`MIN_SESSIONS_AT_LEVEL`, `RECENT_WINDOW`, `ACCEPTABLE_PAIN`, `READY_DIFFICULTY`) are named constants at the top of the file — easily editable.
+
+**Safety nudge:** if the last `SAFETY_WINDOW` (3) sessions consistently report moderate/significant pain, surface a gentle "consider seeing a professional" message (companion, never diagnosis).
+
+Gating only governs levels beyond `assignedStartLevel`; lower levels stay available as skipped.
 
 ## Core user journey
 Home → "+" New Issue → Region Select (Back / Neck-comingsoon) → Intake (branching) → either Red-Flag Detour (informational, ends here) OR Loading → Program → Exercise Detail (on tap) / Check-in (one-tap log → 3 questions) → gating updates → progress reflected on Home & Program.

@@ -13,7 +13,6 @@ import HomeScreen from '../screens/HomeScreen';
 import IntakeScreen from '../screens/IntakeScreen';
 import LoadingScreen from '../screens/LoadingScreen';
 import ProgramScreen from '../screens/ProgramScreen';
-import ProgramsScreen from '../screens/ProgramsScreen';
 import RedFlagDetourScreen from '../screens/RedFlagDetourScreen';
 import RegionSelectScreen from '../screens/RegionSelectScreen';
 import { RootStackParamList } from './types';
@@ -30,7 +29,6 @@ export default function RootNavigator() {
       }}
     >
       <Stack.Screen name="Home" component={HomeScreen} />
-      <Stack.Screen name="Programs" component={ProgramsScreen} />
       <Stack.Screen name="RegionSelect" component={RegionSelectScreen} />
       <Stack.Screen name="Intake" component={IntakeScreen} />
       <Stack.Screen name="Loading" component={LoadingScreen} />

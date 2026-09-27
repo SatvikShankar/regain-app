@@ -13,10 +13,10 @@ import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
+  Alert,
   BackHandler,
   KeyboardAvoidingView,
   Platform,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -27,7 +27,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import OptionCard from '../components/OptionCard';
 import PrimaryButton from '../components/PrimaryButton';
 import ProgressDots from '../components/ProgressDots';
-import { bottomNavClearance, colors } from '../components/ScreenContainer';
+import ScreenHeader from '../components/ScreenHeader';
+import { colors, screenBottomPadding } from '../components/ScreenContainer';
 import { backIntakeQuestions, backIntakeStartQuestionId } from '../data/intake/backIntake';
 import { RootStackParamList } from '../navigation/types';
 import { IntakeQuestion, IntakeQuestionResponse } from '../types/intake';
@@ -187,6 +188,15 @@ export default function IntakeScreen() {
     if (!goToPrevious()) navigation.goBack();
   };
 
+  // Quit the whole intake and return Home, discarding answers. Nothing is saved
+  // until COMPLETE, so there's nothing to clean up.
+  const confirmQuit = () => {
+    Alert.alert('Quit intake?', "Your answers won't be saved.", [
+      { text: 'Keep going', style: 'cancel' },
+      { text: 'Quit', style: 'destructive', onPress: () => navigation.navigate('Home') },
+    ]);
+  };
+
   useEffect(() => {
     const sub = BackHandler.addEventListener('hardwareBackPress', () => goToPrevious());
     return () => sub.remove();
@@ -207,13 +217,9 @@ export default function IntakeScreen() {
         style={styles.flex}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-        <View style={styles.header}>
-          <Pressable onPress={onBackPress} style={styles.backButton} hitSlop={12}>
-            <Text style={styles.backChevron}>‹</Text>
-          </Pressable>
-          <View style={styles.progressWrap}>
-            <ProgressDots current={path.length} total={total} />
-          </View>
+        <ScreenHeader onBack={onBackPress} onHome={confirmQuit} />
+        <View style={styles.progressRow}>
+          <ProgressDots current={path.length} total={total} />
         </View>
 
         <ScrollView
@@ -278,28 +284,10 @@ const styles = StyleSheet.create({
   flex: {
     flex: 1,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingTop: 4,
-    gap: 8,
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  backChevron: {
-    color: colors.textPrimary,
-    fontSize: 34,
-    fontWeight: '300',
-    marginTop: -6,
-  },
-  progressWrap: {
-    flex: 1,
-    paddingRight: 20,
+  progressRow: {
+    paddingHorizontal: 24,
+    paddingTop: 8,
+    paddingBottom: 4,
   },
   scrollContent: {
     paddingHorizontal: 24,
@@ -335,6 +323,6 @@ const styles = StyleSheet.create({
   footer: {
     paddingHorizontal: 24,
     paddingTop: 12,
-    paddingBottom: bottomNavClearance,
+    paddingBottom: screenBottomPadding,
   },
 });

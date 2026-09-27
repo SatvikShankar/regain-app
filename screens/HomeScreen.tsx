@@ -1,36 +1,73 @@
-// Home — the landing dashboard. Reads programs from storage on focus.
-//   - No programs: warm greeting + a single call to action.
-//   - Has programs: quick-continue cards + a light, derived progress line.
-// The richer motivational snapshot is Step 6; this is the functional version.
+// Home — the hub. All roads lead here. Lists the user's programs, shows a quiet
+// progress reflection, and is the one place you start a new program. No header
+// (it's the root); no bottom bar.
+//
+// Freshness comes from honestly reflecting state, not manufactured novelty: a
+// time-of-day greeting + one contextual line driven by a few real states, plus
+// stats that move as you log. (Copy/visual tuning is Step 7.)
 
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import PrimaryButton from '../components/PrimaryButton';
 import ProgramCard from '../components/ProgramCard';
-import { bottomNavClearance, colors } from '../components/ScreenContainer';
+import StatTile from '../components/StatTile';
+import { colors, screenBottomPadding } from '../components/ScreenContainer';
 import { RootStackParamList } from '../navigation/types';
-import { StoredProgram } from '../types/program';
-import { getAllPrograms } from '../utils/storage';
+import { SessionLogEntry, StoredProgram } from '../types/program';
+import { getProgramName } from '../utils/programHelpers';
+import { deleteProgram, getAllPrograms } from '../utils/storage';
 
-// Sessions logged across all programs in the last 7 days — derived at render.
-function sessionsThisWeek(programs: StoredProgram[]): number {
-  const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
-  let count = 0;
-  for (const program of programs) {
-    for (const entry of program.sessionLog) {
-      const t = new Date(entry.date).getTime();
-      if (!Number.isNaN(t) && t >= weekAgo) count += 1;
-    }
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+function greeting(): string {
+  const h = new Date().getHours();
+  if (h < 12) return 'Good morning';
+  if (h < 18) return 'Good afternoon';
+  return 'Good evening';
+}
+
+function allEntries(programs: StoredProgram[]): SessionLogEntry[] {
+  return programs.flatMap((p) => p.sessionLog);
+}
+
+function sessionsWithin(entries: SessionLogEntry[], ms: number): number {
+  const cutoff = Date.now() - ms;
+  return entries.filter((e) => {
+    const t = new Date(e.date).getTime();
+    return !Number.isNaN(t) && t >= cutoff;
+  }).length;
+}
+
+// One honest, state-driven line — no rotation engine, no guilt.
+function contextualLine(programs: StoredProgram[]): string {
+  const entries = allEntries(programs);
+  if (entries.length === 0) return 'Ready for your first session?';
+
+  const times = entries
+    .map((e) => new Date(e.date).getTime())
+    .filter((t) => !Number.isNaN(t));
+  const last = Math.max(...times);
+
+  if (new Date(last).toDateString() === new Date().toDateString()) {
+    return "Logged today — nice. That's how progress adds up.";
   }
-  return count;
+  const daysSince = Math.floor((Date.now() - last) / DAY_MS);
+  if (daysSince >= 7) {
+    return "Been a little while — your program's right here whenever you're ready.";
+  }
+  return 'Pick up where you left off.';
 }
 
 export default function HomeScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [programs, setPrograms] = useState<StoredProgram[]>([]);
+
+  const load = useCallback(async () => {
+    setPrograms(await getAllPrograms());
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
@@ -44,35 +81,59 @@ export default function HomeScreen() {
     }, [])
   );
 
+  const confirmDelete = (program: StoredProgram) => {
+    Alert.alert(
+      'Delete program?',
+      `"${getProgramName(program)}" will be permanently removed. This can't be undone.`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            await deleteProgram(program.id);
+            await load();
+          },
+        },
+      ]
+    );
+  };
+
   const hasPrograms = programs.length > 0;
-  const weekCount = sessionsThisWeek(programs);
+  const entries = allEntries(programs);
+  const thisWeek = sessionsWithin(entries, 7 * DAY_MS);
+  const total = entries.length;
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView contentContainerStyle={styles.content}>
-        <Text style={styles.greeting}>Welcome to Regain</Text>
+        <Text style={styles.greeting}>{greeting()}</Text>
 
         {hasPrograms ? (
           <>
-            <Text style={styles.subtitle}>
-              {weekCount > 0
-                ? `${weekCount} session${weekCount === 1 ? '' : 's'} logged this week — nice work.`
-                : 'Pick up where you left off.'}
-            </Text>
+            <Text style={styles.line}>{contextualLine(programs)}</Text>
 
+            <View style={styles.stats}>
+              <StatTile value={thisWeek} label="This week" />
+              <StatTile value={total} label="Total sessions" />
+            </View>
+
+            <Text style={styles.sectionLabel}>Your programs</Text>
             <View style={styles.list}>
               {programs.map((program) => (
                 <ProgramCard
                   key={program.id}
                   program={program}
                   onPress={() => navigation.navigate('Program', { programId: program.id })}
+                  onLongPress={() => confirmDelete(program)}
                 />
               ))}
             </View>
+            <Text style={styles.hint}>Long-press a program to delete it.</Text>
 
             <View style={styles.newIssue}>
               <PrimaryButton
-                label="Start another program"
+                label="New program"
                 variant="subtle"
                 onPress={() => navigation.navigate('RegionSelect')}
               />
@@ -80,9 +141,9 @@ export default function HomeScreen() {
           </>
         ) : (
           <View style={styles.empty}>
-            <Text style={styles.subtitle}>
+            <Text style={styles.line}>
               Regain builds you a staged exercise plan for back or neck pain — an
-              exercise companion that adapts to where you're starting from.
+              exercise companion that meets you where you're starting from.
             </Text>
             <PrimaryButton
               label="Tell us what's bothering you"
@@ -102,29 +163,45 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: 24,
-    paddingTop: 24,
-    paddingBottom: bottomNavClearance,
+    paddingTop: 28,
+    paddingBottom: screenBottomPadding,
   },
   greeting: {
     color: colors.textPrimary,
     fontSize: 30,
     fontWeight: '700',
   },
-  subtitle: {
+  line: {
     color: colors.textSecondary,
-    fontSize: 15,
-    lineHeight: 22,
+    fontSize: 16,
+    lineHeight: 23,
     marginTop: 10,
   },
-  list: {
+  stats: {
+    flexDirection: 'row',
+    gap: 12,
     marginTop: 24,
+  },
+  sectionLabel: {
+    color: colors.textPrimary,
+    fontSize: 18,
+    fontWeight: '700',
+    marginTop: 32,
+    marginBottom: 14,
+  },
+  list: {
     gap: 14,
   },
+  hint: {
+    color: colors.textSecondary,
+    fontSize: 13,
+    marginTop: 12,
+  },
   newIssue: {
-    marginTop: 24,
+    marginTop: 28,
   },
   empty: {
-    marginTop: 12,
+    marginTop: 4,
     gap: 24,
   },
 });

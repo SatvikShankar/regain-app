@@ -15,7 +15,8 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import LevelSection from '../components/LevelSection';
 import PrimaryButton from '../components/PrimaryButton';
-import { bottomNavClearance, colors } from '../components/ScreenContainer';
+import ScreenHeader from '../components/ScreenHeader';
+import { colors, screenBottomPadding } from '../components/ScreenContainer';
 import { RootStackParamList } from '../navigation/types';
 import { StoredProgram } from '../types/program';
 import {
@@ -60,9 +61,9 @@ export default function ProgramScreen() {
   const onSave = async () => {
     if (!program) return;
     await saveProgram(program);
-    // Land on the Programs list with the new program visible; drop the intake
-    // flow from the back stack.
-    navigation.reset({ index: 1, routes: [{ name: 'Home' }, { name: 'Programs' }] });
+    // Land back on Home (the hub) with the new program now showing; drop the
+    // intake flow from the back stack.
+    navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
   };
 
   const onRedo = () => {
@@ -73,6 +74,7 @@ export default function ProgramScreen() {
   if (!program) {
     return (
       <SafeAreaView style={styles.container} edges={['top']}>
+        <ScreenHeader onHome={() => navigation.navigate('Home')} />
         <View style={styles.content}>
           <Text style={styles.title}>Program not found</Text>
           <Text style={styles.subtitle}>This program may have been deleted.</Text>
@@ -87,6 +89,7 @@ export default function ProgramScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
+      {!isPreview ? <ScreenHeader onHome={() => navigation.navigate('Home')} /> : null}
       <ScrollView contentContainerStyle={styles.content}>
         {isPreview ? <Text style={styles.eyebrow}>Your new program</Text> : null}
         <Text style={styles.title}>{getProgramName(program)}</Text>
@@ -155,8 +158,8 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: 24,
-    paddingTop: 20,
-    paddingBottom: bottomNavClearance,
+    paddingTop: 8,
+    paddingBottom: screenBottomPadding,
   },
   eyebrow: {
     color: colors.accent,

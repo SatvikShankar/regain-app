@@ -23,10 +23,13 @@ Reference was a fitness-app Figma template, used for *vibe* only (its auth scree
 - Exact hex values: finalize visually on device during build, not pre-specified
 
 ## Navigation
-- **Bottom nav (persistent on ALL screens)**: the floating rounded bar — Home, "+" center, Programs — should remain visible throughout the entire app, including intake, program, exercise detail, and check-in screens. The user wants the app to feel connected end-to-end, not sectioned. Implementation: move the tab navigator to wrap the root stack rather than the other way around, OR overlay the bar as a persistent component. Decide during Step 2 build.
-- **"+" New Issue** (center, raised filled circle): routes to Region Select from anywhere in the app.
+- **Home-centric, NO bottom bar** (decided/built after Step 5; reverses the earlier "persistent bar on every screen" instinct). The app is a single native stack with **Home as the hub** — Home lists all programs and the progress widgets, and is the only place you start a new program ("all roads lead home"). Every other screen is immersive and reached from Home. This is the deliberate move toward a fluid, uncluttered feel.
+- **Unified header** (`components/ScreenHeader`) on every non-Home screen: **left = one step back** (previous screen / previous question) — shown only when the previous screen differs from Home; **right = Home**. Home itself has no header.
+  - Intake's header = back-to-previous-question (left) + quit-to-Home with a confirm (right).
+  - Program (saved), Exercise Detail, Check-in, Region Select carry the header; the preview Program keeps only Save/Redo; the red-flag detour keeps its own Home / Start-over buttons.
 - Must fully support Android hardware/gesture back. Back mid-intake → previous question; back must never unexpectedly exit the app mid-flow.
-- **Screen transitions**: on Android, the current native stack slide shows a white flash at the edge during the transition. Fix before shipping: set `animation: 'fade'` or `animation: 'slide_from_right'` with matching background colors on every stack screen, or switch to a custom interpolated transition. Test carefully — the fix that works on Android may look wrong on the home→program card tap. Address in the polish pass (Step 7) but note it here so it is not forgotten.
+- **Screen transitions**: on Android the native stack slide can flash white at the edge. Partly addressed (native root + stack `contentStyle` painted the plum background via `expo-system-ui`). Full transition polish is Step 7 — revisit `animation` options there if any flash remains.
+- Icons in the header are text placeholders for now; Step 7's design-system pass swaps in a real icon set and may extract a `theme.ts` (colours/spacing currently live in `components/ScreenContainer`).
 
 ---
 
@@ -101,20 +104,22 @@ Connections: → Exercise Detail (tap exercise), → Check-in (log action), ← 
 Connections: ← Program.
 
 ### 8. Check-in (from Program's log action)
-- Three short questions: pain during, pain after, ready to progress? (selectable answers feeding the stored `sessionLog` entry)
-- On submit: append entry to `sessionLog`, run gating (`utils/gating.ts`), write to storage
-- If gating unlocks the next level: a brief celebratory "level unlocked" moment using the warm secondary accent
-- Returns to Program (progress reflected)
+- Three short questions about the session just done: **pain during**, **pain after**, and **how did it feel** (too easy / about right / too hard). Fast selectable chips, feeding the stored `sessionLog` entry. No speculative "are you ready?" toggle — see gating design in CLAUDE.md.
+- On submit: append entry to `sessionLog`, write to storage, run gating (`utils/gating.ts`).
+- If the behavioural gate is satisfied: show an **informed offer** ("you seem ready — unlock Level N?") with accept / not-yet. On accept → unlock + a brief celebratory "level unlocked" moment using the warm secondary accent.
+- If not ready: a short, encouraging "session logged" confirmation. If pain has been high across recent sessions, include a gentle "consider seeing a professional" nudge.
+- Returns to Program (progress reflected).
 
 Connections: → Program (with possible level-unlock moment).
 
 ---
 
-## Components (reusable, expected)
+## Components (reusable, built)
 - `OptionCard` (single/multi select, with cyan selected state)
-- `BottomNav` (3 items + raised center +)
-- `ProgressBar` / step dots (intake)
-- `ProgramCard` (home quick-continue + program list)
+- `ScreenHeader` (unified back-left / Home-right header; replaced the old BottomNav)
+- `StatTile` (calm Home progress-reflection tile)
+- `ProgressDots` (intake step progress)
+- `ProgramCard` (home program list + quick-continue)
 - `LevelSection` (program screen, with locked/active/completed states)
 - `PrimaryButton` (rounded, cyan fill)
 - `LoadingState` (the generating screen)

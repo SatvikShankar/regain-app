@@ -1,28 +1,27 @@
-// Exercise Detail — one exercise, looked up from the region data by id.
-// Shows how to perform it (description), why it helps (purpose), starting
-// guidance (sets/reps/hold, framed as adjustable), an equipment note where
-// relevant, and a Watch button when a video link exists.
+// Exercise Detail — one exercise, looked up from region data by id. Reached from
+// Program, so the header offers back (→ Program) and Home. Shows how-to,
+// purpose, starting guidance, an equipment note where relevant, and a Watch
+// button when a video link exists.
 
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Linking, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import PrimaryButton from '../components/PrimaryButton';
-import { bottomNavClearance, colors } from '../components/ScreenContainer';
+import ScreenHeader from '../components/ScreenHeader';
+import { colors, screenBottomPadding } from '../components/ScreenContainer';
 import { RootStackParamList } from '../navigation/types';
 import { Exercise } from '../types/exercise';
 import { findExercise } from '../utils/programHelpers';
 
-// No dedicated equipment field yet (MVP); surface a band note when the content
-// clearly calls for one. See CLAUDE.md — an explicit field can come later.
 function needsBand(exercise: Exercise): boolean {
   return /band/i.test(`${exercise.indicatedFor} ${exercise.description}`);
 }
 
 function guidanceLine(exercise: Exercise): string {
-  const parts = [`${exercise.sets} set${exercise.sets === 1 ? '' : 's'}`];
-  parts.push(`${exercise.reps} rep${exercise.reps === 1 ? '' : 's'}`);
-  const base = parts.join(' × ');
+  const base = `${exercise.sets} set${exercise.sets === 1 ? '' : 's'} × ${exercise.reps} rep${
+    exercise.reps === 1 ? '' : 's'
+  }`;
   return exercise.holdSeconds ? `${base} · hold ${exercise.holdSeconds}s` : base;
 }
 
@@ -33,9 +32,12 @@ export default function ExerciseDetailScreen() {
   const exerciseId = route.params?.exerciseId;
   const exercise = exerciseId ? findExercise(region, exerciseId) : undefined;
 
+  const goHome = () => navigation.navigate('Home');
+
   if (!exercise) {
     return (
       <SafeAreaView style={styles.container} edges={['top']}>
+        <ScreenHeader onBack={() => navigation.goBack()} onHome={goHome} />
         <View style={styles.content}>
           <Text style={styles.title}>Exercise not found</Text>
         </View>
@@ -45,6 +47,7 @@ export default function ExerciseDetailScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
+      <ScreenHeader onBack={() => navigation.goBack()} onHome={goHome} />
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.title}>{exercise.name}</Text>
 
@@ -73,10 +76,6 @@ export default function ExerciseDetailScreen() {
             />
           </View>
         ) : null}
-
-        <View style={styles.actions}>
-          <PrimaryButton label="Back to program" variant="subtle" onPress={() => navigation.goBack()} />
-        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -89,8 +88,8 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: 24,
-    paddingTop: 20,
-    paddingBottom: bottomNavClearance,
+    paddingTop: 8,
+    paddingBottom: screenBottomPadding,
   },
   title: {
     color: colors.textPrimary,

@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Generating</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;background:#0F0B11}
+*{box-sizing:border-box}
+.scr{width:412px;height:915px;background:radial-gradient(120% 55% at 50% -12%,#2A1C2E 0%,#161118 62%);color:#F4EDEA;font-family:Figtree,system-ui,sans-serif;position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center}
+.ring{position:absolute;border-radius:999px;left:50%;top:50%;transform:translate(-50%,-50%)}
+@keyframes br{0%,100%{transform:translate(-50%,-50%) scale(.94)}50%{transform:translate(-50%,-50%) scale(1.04)}}
+.r1{width:240px;height:240px;background:rgba(182,165,234,.08);animation:br 4s ease-in-out infinite}
+.r2{width:172px;height:172px;background:rgba(182,165,234,.12);animation:br 4s ease-in-out .6s infinite}
+.r3{width:108px;height:108px;background:rgba(156,211,178,.22);animation:br 4s ease-in-out 1.2s infinite}
+.r4{width:52px;height:52px;background:#9CD3B2;animation:br 4s ease-in-out 1.8s infinite}
+.ln{display:flex;align-items:center;gap:10px;font:500 15px/20px Figtree,sans-serif}
+.ic{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;flex:none}
+</style>
+</helmet>
+<div class="scr">
+  <div style="height:44px;flex:none"></div>
+  <div style="position:relative;width:280px;height:280px;margin-top:150px;flex:none" aria-hidden="true">
+    <span class="ring r1"></span><span class="ring r2"></span><span class="ring r3"></span><span class="ring r4"></span>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:28px;margin-top:48px;padding:0 32px">
+    <h1 style="margin:0;font:700 26px/32px Figtree,sans-serif;letter-spacing:-0.015em;text-align:center">Putting together<br>your program</h1>
+    <div style="display:flex;flex-direction:column;gap:12px" aria-live="polite">
+      <span class="ln" style="color:#9A8D95"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>Reading through your answers…</span>
+      <span class="ln" style="color:#F4EDEA"><span style="width:16px;height:16px;display:flex;align-items:center;justify-content:center"><span style="width:8px;height:8px;border-radius:99px;background:#9CD3B2"></span></span>Finding the right starting level…</span>
+      <span class="ln" style="color:#9A8D95;opacity:.5"><span style="width:16px;height:16px"></span>Choosing exercises that fit…</span>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":412,"height":915}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

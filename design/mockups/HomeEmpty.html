@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Home — empty</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;background:#0F0B11}
+*{box-sizing:border-box}
+.scr{width:412px;height:915px;background:radial-gradient(120% 55% at 50% -12%,#2A1C2E 0%,#161118 62%);color:#F4EDEA;font-family:Figtree,system-ui,sans-serif;position:relative;overflow:hidden;display:flex;flex-direction:column}
+.safe{height:44px;flex:none}
+.hdr{height:56px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 12px;gap:8px}
+.ib{width:44px;height:44px;border-radius:999px;background:#211A24;border:0;color:#F4EDEA;display:flex;align-items:center;justify-content:center;padding:0;flex:none}
+.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.main{flex:1;min-height:0;padding:8px 20px 0;display:flex;flex-direction:column;overflow:hidden}
+.foot{flex:none;padding:12px 20px 28px;display:flex;flex-direction:column;gap:12px;align-items:center}
+.btn{height:56px;width:100%;border-radius:999px;border:0;font:700 17px/20px Figtree,system-ui,sans-serif;display:flex;align-items:center;justify-content:center;gap:10px;padding:0 24px;text-decoration:none}
+.bp{background:#9CD3B2;color:#10241A}
+.p{font:400 16px/24px Figtree,sans-serif;color:#C3B7BD;margin:0}
+.cap{font:500 13px/18px Figtree,sans-serif;color:#9A8D95;margin:0}
+</style>
+</helmet>
+<div class="scr">
+  <div class="safe"></div>
+  <div class="hdr">
+    <span></span>
+    <button class="ib" aria-label="Settings"><svg class="ic" viewBox="0 0 24 24"><path d="M20 7h-9"></path><path d="M14 17H5"></path><circle cx="17" cy="17" r="3"></circle><circle cx="7" cy="7" r="3"></circle></svg></button>
+  </div>
+  <div class="main" style="gap:36px;padding-top:12px">
+    <svg viewBox="0 0 372 300" style="width:372px;height:300px;flex:none" role="img" aria-label="A soft sunrise over gentle hills">
+      <defs>
+        <clipPath id="w"><rect width="372" height="300" rx="44"></rect></clipPath>
+      </defs>
+      <g clip-path="url(#w)">
+        <rect width="372" height="300" fill="#211A24"></rect>
+        <circle cx="186" cy="214" r="118" fill="#F3B486" opacity="0.07"></circle>
+        <circle cx="186" cy="214" r="84" fill="#F3B486" opacity="0.10"></circle>
+        <circle cx="186" cy="214" r="52" fill="#F3B486" opacity="0.9"></circle>
+        <path d="M-10 236 C 70 196, 130 206, 200 232 S 320 250, 390 214 V 310 H -10 Z" fill="#3A2E44"></path>
+        <path d="M-10 262 C 80 238, 170 246, 240 266 S 340 280, 390 258 V 310 H -10 Z" fill="#2E3A35"></path>
+        <path d="M-10 286 C 90 270, 200 276, 390 284 V 310 H -10 Z" fill="#9CD3B2" opacity="0.35"></path>
+        <circle cx="74" cy="70" r="3" fill="#B6A5EA" opacity="0.7"></circle>
+        <circle cx="300" cy="54" r="2.5" fill="#8DBBDD" opacity="0.7"></circle>
+        <circle cx="262" cy="104" r="2" fill="#F4EDEA" opacity="0.4"></circle>
+        <circle cx="116" cy="118" r="2" fill="#F4EDEA" opacity="0.35"></circle>
+      </g>
+    </svg>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <h1 style="margin:0;font:700 34px/40px Figtree,sans-serif;letter-spacing:-0.02em">Hi Meera,<br>let's ease into it.</h1>
+      <p class="p" style="text-wrap:pretty">Regain gives you a gentle, staged home-exercise plan for back pain, and offers the next step only when your sessions say you're ready.</p>
+    </div>
+  </div>
+  <div class="foot">
+    <button class="btn bp">Start your first program</button>
+    <p class="cap">About 2 minutes · Everything stays on your phone</p>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":412,"height":915}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -1,12 +1,13 @@
-// Single native stack holding every screen. The floating bottom nav lives above
-// this (see App.tsx) and persists across all of them.
+// Single native stack holding every screen (no bottom bar — Home is the hub).
 //
-// contentStyle sets the dark plum background on every screen's card so there's
-// no white edge flash during the slide transition (Satvik flagged this). Full
-// transition polish is deferred to Step 7, but this removes the obvious flash.
+// Transitions run natively (react-native-screens), so they stay smooth even when
+// JS is busy. Per-screen animation reflects the screen's role:
+//   default      → horizontal push (going deeper)
+//   Loading/Detour → fade (a state change, not a place)
+//   CheckIn      → slides up (a short task sheet over the program)
+// contentStyle paints every screen plum so edges never flash white mid-transition.
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { colors } from '../components/ScreenContainer';
 import CheckInScreen from '../screens/CheckInScreen';
 import ExerciseDetailScreen from '../screens/ExerciseDetailScreen';
 import HomeScreen from '../screens/HomeScreen';
@@ -15,6 +16,7 @@ import LoadingScreen from '../screens/LoadingScreen';
 import ProgramScreen from '../screens/ProgramScreen';
 import RedFlagDetourScreen from '../screens/RedFlagDetourScreen';
 import RegionSelectScreen from '../screens/RegionSelectScreen';
+import { colors } from '../theme';
 import { RootStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -25,17 +27,18 @@ export default function RootNavigator() {
       initialRouteName="Home"
       screenOptions={{
         headerShown: false,
+        animation: 'ios_from_right',
         contentStyle: { backgroundColor: colors.background },
       }}
     >
       <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="RegionSelect" component={RegionSelectScreen} />
       <Stack.Screen name="Intake" component={IntakeScreen} />
-      <Stack.Screen name="Loading" component={LoadingScreen} />
-      <Stack.Screen name="RedFlagDetour" component={RedFlagDetourScreen} />
+      <Stack.Screen name="Loading" component={LoadingScreen} options={{ animation: 'fade' }} />
+      <Stack.Screen name="RedFlagDetour" component={RedFlagDetourScreen} options={{ animation: 'fade' }} />
       <Stack.Screen name="Program" component={ProgramScreen} />
       <Stack.Screen name="ExerciseDetail" component={ExerciseDetailScreen} />
-      <Stack.Screen name="CheckIn" component={CheckInScreen} />
+      <Stack.Screen name="CheckIn" component={CheckInScreen} options={{ animation: 'slide_from_bottom' }} />
     </Stack.Navigator>
   );
 }

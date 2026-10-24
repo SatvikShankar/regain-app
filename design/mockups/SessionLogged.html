@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Session logged</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;background:#0F0B11}
+*{box-sizing:border-box}
+.scr{width:412px;height:915px;background:radial-gradient(110% 50% at 50% 30%,#1F2A25 0%,#161118 60%);color:#F4EDEA;font-family:Figtree,system-ui,sans-serif;position:relative;overflow:hidden;display:flex;flex-direction:column}
+.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.foot{flex:none;padding:12px 20px 28px;display:flex;flex-direction:column;gap:6px}
+.btn{height:56px;width:100%;border-radius:999px;border:0;font:700 17px/20px Figtree,system-ui,sans-serif;display:flex;align-items:center;justify-content:center;gap:10px;padding:0 24px}
+.bp{background:#9CD3B2;color:#10241A}
+</style>
+</helmet>
+<div class="scr">
+  <div style="height:44px;flex:none"></div>
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;padding:0 28px">
+    <div style="width:136px;height:136px;border-radius:999px;background:rgba(156,211,178,.12);display:flex;align-items:center;justify-content:center">
+      <div style="width:84px;height:84px;border-radius:999px;background:#9CD3B2;color:#10241A;display:flex;align-items:center;justify-content:center">
+        <svg class="ic" viewBox="0 0 24 24" style="width:40px;height:40px;stroke-width:2.6" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center">
+      <h1 style="margin:0;font:700 34px/40px Figtree,sans-serif;letter-spacing:-0.02em">Session logged</h1>
+      <p style="margin:0;font:400 17px/26px Figtree,sans-serif;color:#C3B7BD">That's 4 in the last 7 days.<br>Steady work adds up.</p>
+    </div>
+    <div style="background:rgba(229,203,120,.11);border-radius:24px;padding:16px 18px;display:flex;gap:12px;align-items:flex-start;width:100%">
+      <svg class="ic" viewBox="0 0 24 24" style="width:20px;height:20px;color:#E5CB78;margin-top:1px" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+      <p style="margin:0;font:400 15px/22px Figtree,sans-serif;color:#EFDDA0">You've reported notable pain the last few sessions. If it keeps up, it's worth checking in with a doctor or physiotherapist.</p>
+    </div>
+  </div>
+  <div class="foot">
+    <button class="btn bp">Done</button>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":412,"height":915}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

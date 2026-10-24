@@ -1,33 +1,38 @@
 // Program — the working hub for one program. ONE screen, two entry modes:
 //   - preview (route.params.previewProgram): a freshly generated, unsaved
-//     program → shows a Save / Redo bar. Nothing is persisted until Save.
-//   - saved (route.params.programId): loaded from storage on focus → shows the
-//     "Log today's session" action.
+//     program → Save / Redo pinned at the bottom. Nothing is persisted until Save.
+//   - saved (route.params.programId): loaded from storage on focus → "Log
+//     today's session" pinned at the bottom.
 //
-// Shows: name, starting level, current unlocked level, and the levels as
-// collapsible sections (exercise count in brackets; tap to reveal exercise
-// names; tap a name → Exercise Detail). See SCREENS.md.
+// Shows: name, a current-level summary widget (name + goal), light derived
+// stats, and the levels as collapsible sections (tap to reveal exercise names;
+// tap a name → Exercise Detail). See SCREENS.md.
 
-import { useFocusEffect, useNavigation, useRoute, RouteProp } from '@react-navigation/native';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useCallback, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import LevelSection from '../components/LevelSection';
-import PrimaryButton from '../components/PrimaryButton';
+import { useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import LevelSection, { levelLayoutTransition } from '../components/LevelSection';
 import ScreenHeader from '../components/ScreenHeader';
-import { colors, screenBottomPadding } from '../components/ScreenContainer';
+import StatTile from '../components/StatTile';
+import AppText from '../components/primitives/AppText';
+import Button from '../components/primitives/Button';
+import Card from '../components/primitives/Card';
+import FadeIn from '../components/primitives/FadeIn';
+import Icon from '../components/primitives/Icon';
+import Screen from '../components/primitives/Screen';
 import { RootStackParamList } from '../navigation/types';
-import { StoredProgram } from '../types/program';
+import { colors, spacing } from '../theme';
 import {
+  getLevelGoal,
   getLevelName,
   getLevelNumbers,
   getLevelStatus,
-  getMaxUnlockedLevel,
   getProgramName,
   getSelectedExercises,
+  getWorkingLevel,
 } from '../utils/programHelpers';
-import { getProgram, saveProgram } from '../utils/storage';
+import { useProgram, useProgramStore } from '../state/programStore';
 
 export default function ProgramScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -36,33 +41,24 @@ export default function ProgramScreen() {
   const programId = route.params?.programId;
   const isPreview = !!previewProgram;
 
-  const [program, setProgram] = useState<StoredProgram | null>(previewProgram ?? null);
+  // Saved programs come from the shared store, so check-ins and level changes
+  // show here instantly. A preview (just generated, unsaved) arrives as a param.
+  const savedProgram = useProgram(programId);
+  const saveToStore = useProgramStore((st) => st.save);
+  const program = previewProgram ?? savedProgram ?? null;
+
+  // The working level starts expanded; the user's choice is kept after that.
   const [expandedLevel, setExpandedLevel] = useState<number | null>(
-    previewProgram ? getMaxUnlockedLevel(previewProgram) : null
+    program ? getWorkingLevel(program) : null
   );
 
-  // Saved mode: (re)load from storage whenever the screen gains focus, so edits
-  // elsewhere (future check-ins) reflect here.
-  useFocusEffect(
-    useCallback(() => {
-      if (isPreview || !programId) return;
-      let active = true;
-      getProgram(programId).then((p) => {
-        if (!active) return;
-        setProgram(p);
-        setExpandedLevel(p ? getMaxUnlockedLevel(p) : null);
-      });
-      return () => {
-        active = false;
-      };
-    }, [isPreview, programId])
-  );
+  const goHome = () => navigation.navigate('Home');
 
   const onSave = async () => {
     if (!program) return;
-    await saveProgram(program);
-    // Land back on Home (the hub) with the new program now showing; drop the
-    // intake flow from the back stack.
+    await saveToStore(program);
+    // Land back on Home (the hub) with the new program showing; drop the intake
+    // flow from the back stack.
     navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
   };
 
@@ -73,147 +69,142 @@ export default function ProgramScreen() {
 
   if (!program) {
     return (
-      <SafeAreaView style={styles.container} edges={['top']}>
-        <ScreenHeader onHome={() => navigation.navigate('Home')} />
-        <View style={styles.content}>
-          <Text style={styles.title}>Program not found</Text>
-          <Text style={styles.subtitle}>This program may have been deleted.</Text>
-        </View>
-      </SafeAreaView>
+      <Screen header={<ScreenHeader onHome={goHome} />}>
+        <AppText variant="title">Program not found</AppText>
+        <AppText color="textSecondary" style={styles.subtitle}>
+          This program may have been deleted.
+        </AppText>
+      </Screen>
     );
   }
 
   const startLevel = program.assignedStartLevel;
-  const currentLevel = getMaxUnlockedLevel(program);
+  const currentLevel = getWorkingLevel(program);
   const levels = getLevelNumbers(program);
+  const goal = getLevelGoal(program, currentLevel);
+  const sessionsAtLevel = program.sessionLog.filter((e) => e.level === currentLevel).length;
+
+  const footer = isPreview ? (
+    <>
+      <Button label="Save program" onPress={onSave} />
+      <Button label="Redo intake" variant="ghost" onPress={onRedo} />
+    </>
+  ) : (
+    <Button
+      label="Log today's session"
+      icon="check"
+      onPress={() => navigation.navigate('CheckIn', { programId: program.id })}
+    />
+  );
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
-      {!isPreview ? <ScreenHeader onHome={() => navigation.navigate('Home')} /> : null}
-      <ScrollView contentContainerStyle={styles.content}>
-        {isPreview ? <Text style={styles.eyebrow}>Your new program</Text> : null}
-        <Text style={styles.title}>{getProgramName(program)}</Text>
+    <Screen header={!isPreview ? <ScreenHeader onHome={goHome} /> : undefined} footer={footer}>
+      <FadeIn index={0} style={isPreview && styles.previewTop}>
+        <AppText variant="eyebrow" color={isPreview ? 'accent' : 'textTertiary'}>
+          {isPreview ? 'Your new program' : 'Program'}
+        </AppText>
+        <AppText variant="title" style={styles.title}>
+          {getProgramName(program)}
+        </AppText>
+      </FadeIn>
 
-        <View style={styles.stats}>
-          <View style={styles.stat}>
-            <Text style={styles.statLabel}>Starting level</Text>
-            <Text style={styles.statValue}>
-              {startLevel} · {getLevelName(program, startLevel)}
-            </Text>
+      <FadeIn index={1}>
+        <Card variant="accent" style={styles.levelCard}>
+          <AppText variant="eyebrow" color="accent">
+            {isPreview ? 'Starting at' : 'Now working on'} · Level {currentLevel}
+          </AppText>
+          <AppText variant="heading">{getLevelName(program, currentLevel)}</AppText>
+          {goal ? (
+            <AppText variant="small" color="textSecondary">
+              {goal}
+            </AppText>
+          ) : null}
+        </Card>
+      </FadeIn>
+
+      {!isPreview ? (
+        <FadeIn index={2} style={styles.stats}>
+          <StatTile value={sessionsAtLevel} label="At this level" icon="target" tone="accent" />
+          <StatTile
+            value={program.sessionLog.length}
+            label="Sessions logged"
+            icon="trend"
+            tone="lavender"
+          />
+        </FadeIn>
+      ) : null}
+
+      {startLevel > 1 ? (
+        <FadeIn index={3}>
+          <View style={styles.disclaimer}>
+            <Icon name="info" size={18} color={colors.textTertiary} />
+            <AppText variant="caption" color="textSecondary" style={styles.disclaimerText}>
+              You're starting at level {startLevel}. Earlier levels are marked as
+              skipped, but their exercises stay available anytime.
+            </AppText>
           </View>
-          <View style={styles.stat}>
-            <Text style={styles.statLabel}>Current level</Text>
-            <Text style={styles.statValue}>
-              {currentLevel} · {getLevelName(program, currentLevel)}
-            </Text>
-          </View>
-        </View>
+        </FadeIn>
+      ) : null}
 
-        {startLevel > 1 ? (
-          <Text style={styles.disclaimer}>
-            You're starting at level {startLevel}. Earlier levels are marked as
-            skipped, but their exercises stay available anytime.
-          </Text>
-        ) : null}
-
-        <View style={styles.levels}>
-          {levels.map((level) => (
+      <FadeIn index={4}>
+        <AppText variant="eyebrow" color="textTertiary" style={styles.sectionLabel}>
+          Levels
+        </AppText>
+      </FadeIn>
+      <View style={styles.levels}>
+        {levels.map((level, i) => (
+          <FadeIn key={level} index={5 + i} layout={levelLayoutTransition}>
             <LevelSection
-              key={level}
               level={level}
               name={getLevelName(program, level)}
               exercises={getSelectedExercises(program, level)}
               status={getLevelStatus(program, level)}
+              isCurrent={level === currentLevel}
               expanded={expandedLevel === level}
               onToggle={() => setExpandedLevel(expandedLevel === level ? null : level)}
               onSelectExercise={(exerciseId) =>
                 navigation.navigate('ExerciseDetail', { exerciseId, region: program.region })
               }
             />
-          ))}
-        </View>
-
-        <View style={styles.actions}>
-          {isPreview ? (
-            <>
-              <PrimaryButton label="Save program" onPress={onSave} />
-              <PrimaryButton label="Redo intake" variant="subtle" onPress={onRedo} />
-            </>
-          ) : (
-            <PrimaryButton
-              label="Log today's session"
-              onPress={() => navigation.navigate('CheckIn', { programId: program.id })}
-            />
-          )}
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+          </FadeIn>
+        ))}
+      </View>
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  content: {
-    paddingHorizontal: 24,
-    paddingTop: 8,
-    paddingBottom: screenBottomPadding,
-  },
-  eyebrow: {
-    color: colors.accent,
-    fontSize: 13,
-    fontWeight: '700',
-    letterSpacing: 0.5,
-    textTransform: 'uppercase',
-    marginBottom: 6,
+  previewTop: {
+    paddingTop: spacing.xl,
   },
   title: {
-    color: colors.textPrimary,
-    fontSize: 28,
-    fontWeight: '700',
+    marginTop: spacing.xxs,
   },
   subtitle: {
-    color: colors.textSecondary,
-    fontSize: 15,
-    marginTop: 8,
+    marginTop: spacing.xs,
+  },
+  levelCard: {
+    marginTop: spacing.lg,
+    gap: spacing.xxs,
   },
   stats: {
     flexDirection: 'row',
-    gap: 12,
-    marginTop: 20,
-  },
-  stat: {
-    flex: 1,
-    backgroundColor: colors.surface,
-    borderRadius: 16,
-    padding: 14,
-    gap: 4,
-  },
-  statLabel: {
-    color: colors.textSecondary,
-    fontSize: 12,
-    textTransform: 'uppercase',
-    letterSpacing: 0.4,
-  },
-  statValue: {
-    color: colors.textPrimary,
-    fontSize: 15,
-    fontWeight: '600',
+    gap: spacing.sm,
+    marginTop: spacing.sm,
   },
   disclaimer: {
-    color: colors.textSecondary,
-    fontSize: 13,
-    lineHeight: 19,
-    marginTop: 16,
+    flexDirection: 'row',
+    gap: spacing.xs,
+    marginTop: spacing.md,
+  },
+  disclaimerText: {
+    flex: 1,
+  },
+  sectionLabel: {
+    marginTop: spacing.xl,
+    marginBottom: spacing.sm,
   },
   levels: {
-    marginTop: 24,
-    gap: 12,
-  },
-  actions: {
-    marginTop: 28,
-    gap: 12,
+    gap: spacing.sm,
   },
 });

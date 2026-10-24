@@ -1,11 +1,22 @@
-import { Exercise, ExerciseProgram, LevelInfo } from "../../types/exercise";
+// Back exercise pool — ONE flat list (one row per exercise). Content only:
+// edit text freely; `id`s are referenced by saved programs, so never rename one.
+//
+//   level      which level this exercise belongs to
+//   areas      where it helps: "lower" | "mid" | "upper" | "general"
+//   equipment  [] = none, or e.g. ["resistanceBand"]
+//   indicatedFor  AI-facing (when it's appropriate); description/purpose are user-facing
 
-const level1Exercises: Exercise[] = [
+import { Exercise } from "../../../types/exercise";
+
+export const backExercises: Exercise[] = [
+  // ================= Level 1 =================
   // ---------------- Lower back ----------------
   {
     id: "hamstringStretch",
     name: "Hamstring Stretch",
-    region: ["lower"],
+    level: 1,
+    areas: ["lower"],
+    equipment: [],
     indicatedFor: "general stiffness, tight hamstrings, lower back, early-stage recovery, flexion-tolerant",
     description:
       "Lie on your back. Lift one leg straight up, looping a towel around your toes if it helps. Gently pull the towel to bring your leg toward you, keeping the other leg flat on the floor. Hold, then switch sides.",
@@ -19,7 +30,9 @@ const level1Exercises: Exercise[] = [
   {
     id: "kneeToChest",
     name: "Knee-to-Chest Stretch",
-    region: ["lower"],
+    level: 1,
+    areas: ["lower"],
+    equipment: [],
     indicatedFor: "flexion-tolerant pain, general stiffness, lower back, tight hips and glutes",
     description:
       "Lying on your back, gently pull one knee toward your chest with both hands. Hold, then switch legs.",
@@ -33,7 +46,9 @@ const level1Exercises: Exercise[] = [
   {
     id: "pronePressUp",
     name: "Gentle Prone Press-Up",
-    region: ["lower"],
+    level: 1,
+    areas: ["lower"],
+    equipment: [],
     indicatedFor: "extension-biased pain, worse with standing, early-stage recovery, lower back",
     description:
       "Lie face down. Prop yourself up on your forearms, keeping your hips and lower body relaxed on the floor. Only rise as far as feels comfortable — this is a small, gentle movement, not a deep backbend.",
@@ -49,7 +64,9 @@ const level1Exercises: Exercise[] = [
   {
     id: "thoracicExtensionChair",
     name: "Thoracic Extension Over Chair",
-    region: ["mid"],
+    level: 1,
+    areas: ["mid"],
+    equipment: [],
     indicatedFor: "mid back stiffness, rounded posture, sitting-related pain, upper or mid back",
     description:
       "Sitting or lying with support behind your mid-back (a rolled towel or the edge of a chair works well), gently lean back to extend through your upper-mid spine, then return to neutral.",
@@ -63,7 +80,9 @@ const level1Exercises: Exercise[] = [
   {
     id: "supine9090Rotation",
     name: "Supine 90/90 Spinal Rotation",
-    region: ["mid", "lower"],
+    level: 1,
+    areas: ["mid", "lower"],
+    equipment: [],
     indicatedFor: "mid back, rotational stiffness, general stiffness, low-impact",
     description:
       "Lie on your back with arms stretched out to the sides. Bend your knees to 90 degrees and bring your feet up so your knees and hips are also at 90 degrees. Slowly drop both knees to one side, hold, then bring them back to center and drop to the other side.",
@@ -77,7 +96,9 @@ const level1Exercises: Exercise[] = [
   {
     id: "tennisBallRelease",
     name: "Tennis Ball Wall Release",
-    region: ["mid", "upper"],
+    level: 1,
+    areas: ["mid", "upper"],
+    equipment: [],
     indicatedFor: "muscular tension, mid back, knots or tightness, general stiffness",
     description:
       "Place a tennis ball between your back and a wall, just beside your spine (never directly on it). Gently lean into the ball and move slowly to find and release tight spots.",
@@ -91,7 +112,9 @@ const level1Exercises: Exercise[] = [
   {
     id: "kneelingLatStretch",
     name: "Kneeling Lat Stretch",
-    region: ["mid"],
+    level: 1,
+    areas: ["mid"],
+    equipment: [],
     indicatedFor: "mid back, lats, general stiffness, post-sitting tightness",
     description:
       "Start on your hands and knees, then walk your hands forward well past your head. Sit your hips back toward your heels and let your chest drop gently toward the floor, keeping your back long rather than rounding.",
@@ -107,7 +130,9 @@ const level1Exercises: Exercise[] = [
   {
     id: "wallAngels",
     name: "Wall Angels",
-    region: ["upper"],
+    level: 1,
+    areas: ["upper"],
+    equipment: [],
     indicatedFor: "upper back, rounded shoulders, desk-related pain, general stiffness",
     description:
       "Stand with your back against a wall, arms out in a goalpost position touching the wall. Slowly slide your arms upward and back down, keeping as much contact with the wall as you can.",
@@ -121,7 +146,9 @@ const level1Exercises: Exercise[] = [
   {
     id: "gentleNeckSideStretch",
     name: "Gentle Neck Side Stretch",
-    region: ["upper"],
+    level: 1,
+    areas: ["upper"],
+    equipment: [],
     indicatedFor: "upper back, base of neck, general tension",
     description:
       "Sit or stand tall. Place one hand behind your back. With the other hand, very gently guide your head to the side until you feel a light stretch — let your hand add only light pressure, never force or pull. Hold, then repeat gently toward the front at roughly a 45-degree angle.",
@@ -135,7 +162,9 @@ const level1Exercises: Exercise[] = [
   {
     id: "claspedHandsForwardStretch",
     name: "Clasped Hands Forward Reach",
-    region: ["upper"],
+    level: 1,
+    areas: ["upper"],
+    equipment: [],
     indicatedFor: "upper back, general stiffness, desk-related tension",
     description:
       "Interlace your fingers and stretch your arms out in front of you, rounding your upper back slightly as you push your hands as far forward as comfortable.",
@@ -151,7 +180,9 @@ const level1Exercises: Exercise[] = [
   {
     id: "catCamel",
     name: "Cat-Camel",
-    region: ["lower", "general"],
+    level: 1,
+    areas: ["lower", "general"],
+    equipment: [],
     indicatedFor: "general stiffness, mobility loss, all regions, gentle warmup, early-stage recovery",
     description:
       "On your hands and knees, slowly alternate between arching your back upward and letting it gently sag downward, moving only within a comfortable, pain-free range.",
@@ -165,7 +196,9 @@ const level1Exercises: Exercise[] = [
   {
     id: "childsPose",
     name: "Child's Pose",
-    region: ["lower", "general"],
+    level: 1,
+    areas: ["lower", "general"],
+    equipment: [],
     indicatedFor: "general stiffness, gentle reset, all regions, flexion-tolerant",
     description:
       "Kneel and sit your hips back toward your heels, reaching your arms forward and letting your chest relax down toward the floor.",
@@ -176,19 +209,14 @@ const level1Exercises: Exercise[] = [
     reps: 1,
     holdSeconds: 30,
   },
-];
-
-export const backLevel1Info: LevelInfo = {
-  name: "Gentle Mobility, Stretching & Relief",
-  goal: "Reduce acute discomfort, restore basic comfortable movement, and build confidence that movement is safe.",
-};
-
-const level2Exercises: Exercise[] = [
+  // ================= Level 2 =================
   // ---------------- Lower back ----------------
   {
     id: "superman",
     name: "Superman",
-    region: ["lower"],
+    level: 2,
+    areas: ["lower"],
+    equipment: [],
     indicatedFor: "extension tolerance, posterior chain activation, lower back, building strength foundation",
     description:
       "Lie face down with arms stretched out in front of you. Gently lift your arms, chest, and legs a few inches off the floor at the same time, squeezing through your lower back and glutes. Hold briefly, then lower with control.",
@@ -202,7 +230,9 @@ const level2Exercises: Exercise[] = [
   {
     id: "cobraPose",
     name: "Cobra Pose",
-    region: ["lower"],
+    level: 2,
+    areas: ["lower"],
+    equipment: [],
     indicatedFor: "extension-biased pain, worse with standing, building extension tolerance, lower back",
     description:
       "Lie face down with hands under your shoulders. Press through your hands to lift your chest off the floor, going only as high as feels comfortable, keeping your hips on the ground. Hold, then lower back down.",
@@ -216,7 +246,9 @@ const level2Exercises: Exercise[] = [
   {
     id: "gluteBridge",
     name: "Glute Bridge",
-    region: ["lower"],
+    level: 2,
+    areas: ["lower"],
+    equipment: [],
     indicatedFor: "general strengthening, lower back, hip stability, low-risk activation",
     description:
       "Lie on your back with knees bent and feet flat on the floor. Lift your hips upward by squeezing your glutes, until your body forms a straight line from shoulders to knees. Hold briefly, then lower with control.",
@@ -230,7 +262,9 @@ const level2Exercises: Exercise[] = [
   {
     id: "piriformisStretch",
     name: "Piriformis Stretch",
-    region: ["lower"],
+    level: 2,
+    areas: ["lower"],
+    equipment: [],
     indicatedFor: "tight hips, lower back, sciatica-adjacent tightness, general stiffness",
     description:
       "Lying on your back, cross one ankle over the opposite knee. Gently pull the uncrossed leg toward your chest until you feel a stretch deep in the hip and glute. Hold, then switch sides.",
@@ -244,7 +278,9 @@ const level2Exercises: Exercise[] = [
   {
     id: "pigeonPose",
     name: "Pigeon Pose",
-    region: ["lower"],
+    level: 2,
+    areas: ["lower"],
+    equipment: [],
     indicatedFor: "tight hips, lower back, deeper hip mobility work, sciatica-adjacent tightness",
     description:
       "From hands and knees, bring one knee forward and angle your shin across your body, lowering your hips toward the floor while keeping them level. Extend the other leg straight back behind you. Keep your weight evenly supported by your hands at first. Hold gently, then switch sides.",
@@ -260,7 +296,9 @@ const level2Exercises: Exercise[] = [
   {
     id: "seatedThoracicRotation",
     name: "Seated Thoracic Rotation",
-    region: ["mid"],
+    level: 2,
+    areas: ["mid"],
+    equipment: [],
     indicatedFor: "rotational stiffness, mid back, active mobility, desk-related stiffness",
     description:
       "Sit upright, cross your arms over your chest, and gently rotate your upper body to one side as far as comfortable, keeping your hips facing forward. Return to center, then rotate to the other side.",
@@ -274,7 +312,9 @@ const level2Exercises: Exercise[] = [
   {
     id: "proneTRaise",
     name: "Prone T-Raise",
-    region: ["mid"],
+    level: 2,
+    areas: ["mid"],
+    equipment: [],
     indicatedFor: "mid back activation, rhomboid and mid-trap strengthening, postural support",
     description:
       "Lie face down with arms out straight to your sides, forming a T shape, thumbs pointing up. Gently lift your arms a few inches off the floor, squeezing your shoulder blades together. Hold briefly, then lower.",
@@ -290,7 +330,9 @@ const level2Exercises: Exercise[] = [
   {
     id: "chinTucks",
     name: "Chin Tucks",
-    region: ["upper"],
+    level: 2,
+    areas: ["upper"],
+    equipment: [],
     indicatedFor: "upper back, base of neck, forward-head posture, desk-related pain",
     description:
       "Sitting or standing tall, gently draw your chin straight back, as if making a double chin, without tilting your head up or down. Hold briefly, then release.",
@@ -304,7 +346,9 @@ const level2Exercises: Exercise[] = [
   {
     id: "scapularSqueezes",
     name: "Scapular Squeezes",
-    region: ["upper"],
+    level: 2,
+    areas: ["upper"],
+    equipment: [],
     indicatedFor: "upper back, postural activation, desk-related tension, rounded shoulders",
     description:
       "Sitting or standing tall, squeeze your shoulder blades together and slightly down, as if trying to hold a pencil between them. Hold briefly, then release.",
@@ -318,7 +362,9 @@ const level2Exercises: Exercise[] = [
   {
     id: "proneYRaise",
     name: "Prone Y-Raise",
-    region: ["upper", "mid"],
+    level: 2,
+    areas: ["upper", "mid"],
+    equipment: [],
     indicatedFor: "mid and upper back activation, lower trapezius strengthening, postural support",
     description:
       "Lie face down with arms stretched out overhead in a Y shape, thumbs pointing up. Gently lift your arms a few inches off the floor, focusing on squeezing through your upper back. Hold briefly, then lower with control.",
@@ -334,7 +380,9 @@ const level2Exercises: Exercise[] = [
   {
     id: "birdDog",
     name: "Bird-Dog",
-    region: ["lower", "general"],
+    level: 2,
+    areas: ["lower", "general"],
+    equipment: [],
     indicatedFor: "core and lower back stability, general strengthening, building control under movement",
     description:
       "Start on your hands and knees. Slowly extend one arm forward and the opposite leg backward at the same time, keeping your back flat and hips level. Hold briefly, then return and switch sides.",
@@ -348,7 +396,9 @@ const level2Exercises: Exercise[] = [
   {
     id: "deadBug",
     name: "Dead Bug",
-    region: ["general"],
+    level: 2,
+    areas: ["general"],
+    equipment: [],
     indicatedFor: "core control, general strengthening, building stability under movement, all regions",
     description:
       "Lie on your back with arms reaching toward the ceiling and knees bent at 90 degrees above your hips. Slowly lower one arm and the opposite leg toward the floor while keeping your lower back pressed flat against the ground. Return and switch sides.",
@@ -359,19 +409,14 @@ const level2Exercises: Exercise[] = [
     reps: 8,
     holdSeconds: null,
   },
-];
-
-export const backLevel2Info: LevelInfo = {
-  name: "Activation & Stability",
-  goal: "Build active strength and control in the muscles that support your spine, with low-impact, controlled movements.",
-};
-
-const level3Exercises: Exercise[] = [
+  // ================= Level 3 =================
   // ---------------- Lower back ----------------
   {
     id: "standingGoodMorning",
     name: "Standing Good Morning",
-    region: ["lower"],
+    level: 3,
+    areas: ["lower"],
+    equipment: [],
     indicatedFor: "lower back strengthening, posterior chain, hip hinge pattern, functional movement",
     description:
       "Stand with feet hip-width apart, hands behind your head or crossed over your chest. Push your hips back and hinge forward at the waist, keeping your back flat and knees slightly soft. Lower until you feel a stretch in your hamstrings, then drive your hips forward to return upright. Think 'hips back' not 'chest down.'",
@@ -385,7 +430,9 @@ const level3Exercises: Exercise[] = [
   {
     id: "elephantWalks",
     name: "Elephant Walks",
-    region: ["lower"],
+    level: 3,
+    areas: ["lower"],
+    equipment: [],
     indicatedFor: "hamstring flexibility, posterior chain, dynamic movement, lower back",
     description:
       "Stand with feet hip-width apart. Keeping your legs as straight as possible, walk forward slowly — alternating reaching each hand toward the opposite foot as you step. Let the movement be slow and deliberate, feeling the stretch through the back of each leg with every step.",
@@ -399,7 +446,9 @@ const level3Exercises: Exercise[] = [
   {
     id: "reverseHyperextension",
     name: "Reverse Hyperextension",
-    region: ["lower"],
+    level: 3,
+    areas: ["lower"],
+    equipment: [],
     indicatedFor: "lower back strengthening, glute activation, posterior chain, spinal decompression",
     description:
       "Lie face down on a sturdy table or bench with your hips at the edge and legs hanging off. Gripping the sides for stability, slowly raise both legs until they are parallel to the floor by squeezing your glutes and lower back. Hold briefly, then lower with control.",
@@ -413,7 +462,9 @@ const level3Exercises: Exercise[] = [
   {
     id: "singleLegRDL",
     name: "Single-Leg Romanian Deadlift",
-    region: ["lower"],
+    level: 3,
+    areas: ["lower"],
+    equipment: [],
     indicatedFor: "lower back, hip hinge, balance, posterior chain, return to sport",
     description:
       "Stand on one leg with a slight knee bend. Hinge forward at the hip, extending the free leg behind you for balance, keeping your back flat and hips square to the floor. Lower your torso until you feel a stretch in the standing leg's hamstring, then drive through the hip to return upright. Use a wall for light balance support if needed at first.",
@@ -429,7 +480,9 @@ const level3Exercises: Exercise[] = [
   {
     id: "proneWRaise",
     name: "Prone W-Raise",
-    region: ["mid"],
+    level: 3,
+    areas: ["mid"],
+    equipment: [],
     indicatedFor: "mid back activation, lower and mid trap strengthening, postural support",
     description:
       "Lie face down with arms bent at 90 degrees, elbows out to the sides forming a W shape, thumbs pointing up. Gently lift your arms a few inches off the floor, squeezing your shoulder blades down and together. Hold briefly, then lower with control.",
@@ -443,7 +496,9 @@ const level3Exercises: Exercise[] = [
   {
     id: "resistanceBandRow",
     name: "Resistance Band Row",
-    region: ["mid", "upper"],
+    level: 3,
+    areas: ["mid", "upper"],
+    equipment: ["resistanceBand"],
     indicatedFor: "mid and upper back strengthening, horizontal pull pattern, rhomboids, postural correction, requires resistance band",
     description:
       "Anchor a resistance band at roughly waist height (around a door handle or post). Hold one end in each hand and step back until there is tension in the band. Pull your elbows back toward your hips, squeezing your shoulder blades together at the end of the movement. For more upper back emphasis, flare your elbows out to 90 degrees as you pull. For more mid-back emphasis, keep elbows close to your sides.",
@@ -457,7 +512,9 @@ const level3Exercises: Exercise[] = [
   {
     id: "scapularPushUp",
     name: "Scapular Push-Up",
-    region: ["mid"],
+    level: 3,
+    areas: ["mid"],
+    equipment: [],
     indicatedFor: "mid back stability, serratus anterior, scapular control, postural support",
     description:
       "Start in a standard push-up position (or on your knees). Keeping your arms completely straight, lower your chest toward the floor purely by letting your shoulder blades come together — then push back up by spreading your shoulder blades apart as wide as possible. No elbow bending at all throughout the movement.",
@@ -473,7 +530,9 @@ const level3Exercises: Exercise[] = [
   {
     id: "bandPullApart",
     name: "Band Pull-Apart",
-    region: ["upper"],
+    level: 3,
+    areas: ["upper"],
+    equipment: ["resistanceBand"],
     indicatedFor: "upper back, rear deltoids, rhomboids, postural correction, rounded shoulders, requires resistance band",
     description:
       "Hold a resistance band in both hands with arms extended straight in front of you at shoulder height, hands shoulder-width apart. Keeping arms straight, pull the band apart by squeezing your shoulder blades together until your arms are fully outstretched to each side. Slowly return to the start.",
@@ -489,7 +548,9 @@ const level3Exercises: Exercise[] = [
   {
     id: "plank",
     name: "Plank",
-    region: ["general"],
+    level: 3,
+    areas: ["general"],
+    equipment: [],
     indicatedFor: "core stability, lower back, general strengthening, anti-extension endurance",
     description:
       "Support yourself on your forearms and toes, body forming a straight line from head to heels. Rotate your hips slightly inward to protect your lower back, and avoid letting your hips sag or pike upward. Breathe steadily and hold. Start with shorter holds and build duration gradually.",
@@ -503,7 +564,9 @@ const level3Exercises: Exercise[] = [
   {
     id: "sidePlank",
     name: "Side Plank",
-    region: ["general"],
+    level: 3,
+    areas: ["general"],
+    equipment: [],
     indicatedFor: "lateral core stability, obliques, quadratus lumborum, general strengthening",
     description:
       "Lie on your side, supporting yourself on one forearm with your elbow directly under your shoulder. Stack your feet or stagger them for more stability. Lift your hips off the floor until your body forms a straight line from head to feet. Hold, then switch sides.",
@@ -517,7 +580,9 @@ const level3Exercises: Exercise[] = [
   {
     id: "singleLegGluteBridge",
     name: "Single-Leg Glute Bridge",
-    region: ["general"],
+    level: 3,
+    areas: ["general"],
+    equipment: [],
     indicatedFor: "glute strength, pelvic stability, lower back, progression from glute bridge",
     description:
       "Lie on your back with knees bent, feet flat on the floor. Extend one leg straight out. Drive through the heel of the planted foot to lift your hips until your body forms a straight line from shoulder to knee, squeezing your glute at the top. Keep your hips level — don't let the unsupported side drop. Lower with control, then switch sides.",
@@ -531,7 +596,9 @@ const level3Exercises: Exercise[] = [
   {
     id: "birdDogSquare",
     name: "Bird-Dog Square",
-    region: ["general"],
+    level: 3,
+    areas: ["general"],
+    equipment: [],
     indicatedFor: "core stability, anti-rotation, general strengthening, coordination, progression from bird-dog",
     description:
       "Start in the bird-dog position — on hands and knees, extend one arm forward and the opposite leg back. Instead of holding still, trace a small square with both your hand and your foot simultaneously: move out, up, in, and down, keeping your hips level and back flat throughout. Return to center and switch sides.",
@@ -545,7 +612,9 @@ const level3Exercises: Exercise[] = [
   {
     id: "bearCrawl",
     name: "Bear Crawl",
-    region: ["general"],
+    level: 3,
+    areas: ["general"],
+    equipment: [],
     indicatedFor: "full-body stability, core control, coordination, return to sport, general strengthening",
     description:
       "Start on hands and knees with your knees hovering just an inch off the floor. Move forward by simultaneously advancing your right hand and left foot, then your left hand and right foot, keeping your back flat and hips low. Move slowly and deliberately — this is a stability exercise, not a race.",
@@ -557,20 +626,3 @@ const level3Exercises: Exercise[] = [
     holdSeconds: 30,
   },
 ];
- 
-export const backLevel3Info: LevelInfo = {
-  name: "Strength & Functional Loading",
-  goal: "Build real-world strength and stability for daily activities, sport, and return to full loading.",
-};
-
-export const backProgram: ExerciseProgram = {
-  1: level1Exercises,
-  2: level2Exercises,
-  3: level3Exercises
-};
-
-export const backLevelInfo: { [level: number]: LevelInfo } = {
-  1: backLevel1Info,
-  2: backLevel2Info,
-  3: backLevel3Info
-};

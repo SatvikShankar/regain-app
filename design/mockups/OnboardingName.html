@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Welcome — name</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;background:#0F0B11}
+*{box-sizing:border-box}
+.scr{width:412px;height:915px;background:radial-gradient(120% 55% at 50% -12%,#2A1C2E 0%,#161118 62%);color:#F4EDEA;font-family:Figtree,system-ui,sans-serif;position:relative;overflow:hidden;display:flex;flex-direction:column}
+.safe{height:44px;flex:none}
+.main{flex:1;min-height:0;padding:8px 20px 0;display:flex;flex-direction:column;overflow:hidden}
+.foot{flex:none;padding:12px 20px 28px;display:flex;flex-direction:column;gap:6px}
+.btn{height:56px;width:100%;border-radius:999px;border:0;font:700 17px/20px Figtree,system-ui,sans-serif;display:flex;align-items:center;justify-content:center;gap:10px;padding:0 24px;text-decoration:none}
+.bp{background:#9CD3B2;color:#10241A}
+.bq{background:transparent;color:#C3B7BD;height:48px;font-weight:600}
+.p{font:400 16px/24px Figtree,sans-serif;color:#C3B7BD;margin:0}
+.cap{font:500 13px/18px Figtree,sans-serif;color:#9A8D95;margin:0}
+.inp{height:60px;width:100%;border-radius:20px;background:#2B2230;border:0;padding:0 20px;font:500 18px/24px Figtree,sans-serif;color:#F4EDEA;box-shadow:inset 0 0 0 2px #9CD3B2;outline:none}
+</style>
+</helmet>
+<div class="scr">
+  <div class="safe"></div>
+  <div class="main" style="padding-top:56px;gap:32px">
+    <div style="display:flex;align-items:center;gap:10px">
+      <svg viewBox="0 0 40 40" style="width:40px;height:40px" aria-hidden="true">
+        <rect width="40" height="40" rx="14" fill="#2B2230"></rect>
+        <path d="M11 26c3-7 9-11 18-12" fill="none" stroke="#9CD3B2" stroke-width="3.2" stroke-linecap="round"></path>
+        <circle cx="12" cy="13" r="3.2" fill="#F3B486"></circle>
+      </svg>
+      <span style="font:700 19px/24px Figtree,sans-serif;letter-spacing:-0.01em">Regain</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <h1 style="margin:0;font:700 34px/40px Figtree,sans-serif;letter-spacing:-0.02em">Hi there.<br>What should we call you?</h1>
+      <p class="p">Just a first name. It stays on this phone. There's no account.</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <label for="nm" class="cap" style="padding-left:4px">Your name</label>
+      <input id="nm" class="inp" value="Meera" readonly>
+    </div>
+  </div>
+  <div class="foot">
+    <button class="btn bp">Continue</button>
+    <button class="btn bq">Skip for now</button>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":412,"height":915}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

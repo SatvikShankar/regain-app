@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Exercise — video and equipment</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;background:#0F0B11}
+*{box-sizing:border-box}
+.scr{width:412px;height:915px;background:radial-gradient(120% 55% at 50% -12%,#2A1C2E 0%,#161118 62%);color:#F4EDEA;font-family:Figtree,system-ui,sans-serif;position:relative;overflow:hidden}
+.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.scrim{position:absolute;inset:0;background:rgba(8,5,10,.62)}
+.sheet{position:absolute;left:0;right:0;bottom:0;top:96px;background:#211A24;border-radius:36px 36px 0 0;box-shadow:0 1px 0 rgba(255,255,255,.05) inset,0 -18px 60px rgba(0,0,0,.6);display:flex;flex-direction:column;overflow:hidden}
+.hnd{width:40px;height:5px;border-radius:99px;background:#4A3D50;margin:10px auto 0;flex:none}
+.cap{font:500 13px/18px Figtree,sans-serif;color:#9A8D95;margin:0}
+.st{flex:1;background:#2B2230;border-radius:18px;padding:12px 14px;display:flex;flex-direction:column;gap:2px}
+.sn{font:700 22px/26px Figtree,sans-serif;font-variant-numeric:tabular-nums}
+.sh{font:600 17px/22px Figtree,sans-serif;margin:0}
+.sp{font:400 16px/24px Figtree,sans-serif;color:#C3B7BD;margin:0}
+</style>
+</helmet>
+<div class="scr">
+  <div style="padding:100px 20px 0;opacity:.6" aria-hidden="true">
+    <div style="font:700 30px/36px Figtree,sans-serif">Strength &amp; Functional Loading</div>
+  </div>
+  <div class="scrim"></div>
+  <div class="sheet" role="dialog" aria-label="Resistance Band Row">
+    <div class="hnd"></div>
+    <div style="padding:14px 20px 28px;display:flex;flex-direction:column;gap:20px">
+      <div style="height:176px;border-radius:24px;background:linear-gradient(160deg,#33283A,#2B2230);position:relative;display:flex;align-items:center;justify-content:center">
+        <a href="https://example.com" style="display:flex;align-items:center;gap:10px;height:52px;padding:0 22px 0 16px;border-radius:999px;background:#F4EDEA;color:#161118;text-decoration:none;font:700 16px/20px Figtree,sans-serif">
+          <span style="width:30px;height:30px;border-radius:999px;background:#161118;color:#F4EDEA;display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:currentColor;margin-left:2px" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg></span>
+          Watch video
+        </a>
+        <span class="cap" style="position:absolute;left:16px;bottom:12px">Opens outside the app</span>
+        <button aria-label="Close" style="position:absolute;right:12px;top:12px;width:40px;height:40px;border-radius:999px;border:0;background:#211A24;color:#F4EDEA;display:flex;align-items:center;justify-content:center"><svg class="ic" viewBox="0 0 24 24" style="width:20px;height:20px"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <p class="cap">Level 3 · Strength &amp; Functional Loading</p>
+        <h1 style="margin:0;font:700 30px/36px Figtree,sans-serif;letter-spacing:-0.02em">Resistance Band Row</h1>
+        <span style="align-self:flex-start;height:30px;padding:0 12px 0 10px;border-radius:10px;background:rgba(141,187,221,.14);color:#A9CDE8;font:600 13px/30px Figtree,sans-serif;display:inline-flex;align-items:center;gap:6px">
+          <svg class="ic" viewBox="0 0 24 24" style="width:16px;height:16px" aria-hidden="true"><path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"></path><path d="M12 22V12"></path><path d="m3.3 7 8.7 5 8.7-5"></path></svg>
+          Needs a resistance band
+        </span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;gap:8px">
+          <div class="st"><span class="sn">3</span><span class="cap">sets</span></div>
+          <div class="st"><span class="sn">12</span><span class="cap">reps</span></div>
+        </div>
+        <p class="cap" style="padding-left:4px">Start here, adjust as needed.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <h2 class="sh">How to do it</h2>
+        <p class="sp">Anchor a resistance band at roughly waist height (around a door handle or post). Hold one end in each hand and step back until there is tension in the band. Pull your elbows back toward your hips, squeezing your shoulder blades together at the end of the movement.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":412,"height":915}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

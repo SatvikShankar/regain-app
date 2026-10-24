@@ -1,24 +1,42 @@
-// One level on the Program screen: a tappable header (level, name, exercise
-// COUNT in brackets, status marker) that expands to reveal exercise NAMES only.
-// Names are tappable → Exercise Detail. Locked levels still expand (preview),
-// with a note and no way to start — details live one tap deeper by design.
+// One level on the Program screen: a tappable header (status badge, level,
+// name, exercise count, rotating chevron) that expands to reveal exercise NAMES
+// only; each name → Exercise Detail. Locked levels still expand as a preview.
+// Expand/collapse animates (layout transition) so siblings glide, not jump.
 
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useEffect } from 'react';
+import { StyleSheet, View } from 'react-native';
+import Animated, {
+  FadeIn,
+  FadeOut,
+  LinearTransition,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from 'react-native-reanimated';
+import { Tone, colors, durations, radii, spacing, springs } from '../theme';
 import { Exercise } from '../types/exercise';
 import { LevelStatus } from '../utils/programHelpers';
-import { colors } from './ScreenContainer';
+import AppText from './primitives/AppText';
+import Icon, { IconName } from './primitives/Icon';
+import IconBadge from './primitives/IconBadge';
+import PressableScale from './primitives/PressableScale';
 
-const STATUS_MARK: Record<LevelStatus, string> = {
-  skipped: '✓',
-  unlocked: '●',
-  locked: '🔒',
+const STATUS: Record<LevelStatus, { icon: IconName; tone: Tone; note?: string }> = {
+  skipped: { icon: 'done', tone: 'sage', note: 'Earlier level — its exercises remain available.' },
+  unlocked: { icon: 'play', tone: 'accent' },
+  locked: { icon: 'locked', tone: 'neutral', note: 'Preview — unlocks as you progress.' },
 };
+
+export const levelLayoutTransition = LinearTransition.springify()
+  .damping(springs.gentle.damping)
+  .stiffness(springs.gentle.stiffness);
 
 export default function LevelSection({
   level,
   name,
   exercises,
   status,
+  isCurrent = false,
   expanded,
   onToggle,
   onSelectExercise,
@@ -27,133 +45,152 @@ export default function LevelSection({
   name: string;
   exercises: Exercise[];
   status: LevelStatus;
+  isCurrent?: boolean;
   expanded: boolean;
   onToggle: () => void;
   onSelectExercise: (exerciseId: string) => void;
 }) {
+  const s = STATUS[status];
   const locked = status === 'locked';
 
+  const rotation = useSharedValue(expanded ? 1 : 0);
+  useEffect(() => {
+    rotation.value = withSpring(expanded ? 1 : 0, springs.gentle);
+  }, [expanded, rotation]);
+  const chevronStyle = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${rotation.value * 180}deg` }],
+  }));
+
   return (
-    <View style={[styles.card, status === 'unlocked' && styles.cardActive]}>
-      <Pressable style={styles.header} onPress={onToggle}>
-        <Text style={[styles.mark, locked && styles.markLocked, status === 'unlocked' && styles.markActive]}>
-          {STATUS_MARK[status]}
-        </Text>
+    <Animated.View
+      layout={levelLayoutTransition}
+      style={[styles.card, isCurrent && styles.cardCurrent]}
+    >
+      <PressableScale
+        onPress={onToggle}
+        haptic="selection"
+        scaleTo={0.985}
+        accessibilityRole="button"
+        accessibilityState={{ expanded }}
+        accessibilityLabel={`Level ${level}, ${name}`}
+        style={styles.header}
+      >
+        <IconBadge name={s.icon} tone={s.tone} size={40} />
         <View style={styles.headerText}>
-          <Text style={styles.levelLabel}>Level {level}</Text>
-          <Text style={styles.levelName}>{name}</Text>
+          <View style={styles.titleRow}>
+            <AppText variant="subheading" color={locked ? 'textSecondary' : 'textPrimary'}>
+              Level {level}
+            </AppText>
+            {isCurrent ? (
+              <View style={styles.currentPill}>
+                <AppText variant="eyebrow" color="accent">
+                  Current
+                </AppText>
+              </View>
+            ) : null}
+          </View>
+          <AppText variant="small" color="textSecondary" numberOfLines={2}>
+            {name} · {exercises.length} exercise{exercises.length === 1 ? '' : 's'}
+          </AppText>
         </View>
-        <Text style={styles.chevron}>{expanded ? '▴' : '▾'}</Text>
-      </Pressable>
+        <Animated.View style={chevronStyle}>
+          <Icon name="expand" color={colors.textTertiary} size={20} />
+        </Animated.View>
+      </PressableScale>
 
       {expanded ? (
-        <View style={styles.body}>
-          {status === 'skipped' ? (
-            <Text style={styles.note}>Earlier level — its exercises remain available.</Text>
+        <Animated.View
+          entering={FadeIn.duration(durations.normal)}
+          exiting={FadeOut.duration(durations.fast)}
+          style={styles.body}
+        >
+          {s.note ? (
+            <AppText variant="caption" color="textTertiary" style={styles.note}>
+              {s.note}
+            </AppText>
           ) : null}
-          {locked ? <Text style={styles.note}>Preview — unlock by progressing.</Text> : null}
 
           {exercises.length === 0 ? (
-            <Text style={styles.note}>No exercises selected for this level.</Text>
+            <AppText variant="caption" color="textTertiary">
+              No exercises selected for this level.
+            </AppText>
           ) : (
             exercises.map((ex) => (
-              <Pressable
+              <PressableScale
                 key={ex.id}
-                style={({ pressed }) => [styles.exerciseRow, pressed && styles.exercisePressed]}
                 onPress={() => onSelectExercise(ex.id)}
+                haptic="tap"
+                scaleTo={0.98}
+                accessibilityRole="button"
+                style={styles.exerciseRow}
               >
-                <Text style={[styles.exerciseName, locked && styles.exerciseNameLocked]}>
+                <AppText
+                  variant="bodyStrong"
+                  color={locked ? 'textSecondary' : 'textPrimary'}
+                  style={styles.exerciseName}
+                >
                   {ex.name}
-                </Text>
-                <Text style={styles.exerciseChevron}>›</Text>
-              </Pressable>
+                </AppText>
+                <Icon name="forward" size={18} color={colors.textTertiary} />
+              </PressableScale>
             ))
           )}
-        </View>
+        </Animated.View>
       ) : null}
-    </View>
+    </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.surface,
-    borderRadius: 18,
+    borderRadius: radii.lg,
+    borderWidth: 1,
+    borderColor: colors.border,
     overflow: 'hidden',
   },
-  cardActive: {
-    borderWidth: 1.5,
-    borderColor: colors.accent,
+  cardCurrent: {
+    borderColor: colors.accentBorder,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-    gap: 14,
-  },
-  mark: {
-    fontSize: 15,
-    color: colors.textSecondary,
-    width: 20,
-    textAlign: 'center',
-  },
-  markActive: {
-    color: colors.accent,
-  },
-  markLocked: {
-    fontSize: 14,
+    padding: spacing.md,
+    gap: spacing.sm,
   },
   headerText: {
     flex: 1,
-  },
-  levelLabel: {
-    color: colors.textPrimary,
-    fontSize: 16,
-    fontWeight: '700',
-  },
-  levelName: {
-    color: colors.textSecondary,
-    fontSize: 13,
-    marginTop: 2,
-  },
-  chevron: {
-    color: colors.textSecondary,
-    fontSize: 16,
-  },
-  body: {
-    paddingHorizontal: 16,
-    paddingBottom: 8,
     gap: 2,
   },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+  },
+  currentPill: {
+    backgroundColor: colors.accentSoft,
+    borderRadius: radii.pill,
+    paddingHorizontal: spacing.xs,
+    paddingVertical: 2,
+  },
+  body: {
+    paddingHorizontal: spacing.md,
+    paddingBottom: spacing.sm,
+    gap: spacing.xs,
+  },
   note: {
-    color: colors.textSecondary,
-    fontSize: 13,
-    fontStyle: 'italic',
-    marginBottom: 8,
+    marginBottom: spacing.xxs,
   },
   exerciseRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 13,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: colors.background,
-  },
-  exercisePressed: {
-    opacity: 0.6,
+    backgroundColor: colors.background,
+    borderRadius: radii.sm,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
   },
   exerciseName: {
     flex: 1,
-    color: colors.textPrimary,
-    fontSize: 15,
-    paddingRight: 12,
-  },
-  exerciseNameLocked: {
-    color: colors.textSecondary,
-  },
-  exerciseChevron: {
-    color: colors.textSecondary,
-    fontSize: 20,
+    paddingRight: spacing.sm,
   },
 });

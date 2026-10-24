@@ -1,42 +1,43 @@
-// A single calm stat tile for the Home progress reflection (e.g. "3 / This week").
-// Deliberately quiet — a number and a label, no charts or pressure framing.
+// One calm stat widget for Home (e.g. "3 · This week"). A tinted icon, a number,
+// a label — no pressure framing. Tone is decorative/meaningful per theme/tones.
 
-import { StyleSheet, Text, View } from 'react-native';
-import { colors } from './ScreenContainer';
+import { StyleSheet, View } from 'react-native';
+import { Tone, spacing } from '../theme';
+import AppText from './primitives/AppText';
+import Card from './primitives/Card';
+import { IconName } from './primitives/Icon';
+import IconBadge from './primitives/IconBadge';
 
 export default function StatTile({
   value,
   label,
+  icon,
+  tone = 'accent',
 }: {
   value: string | number;
   label: string;
+  icon: IconName;
+  tone?: Tone;
 }) {
   return (
-    <View style={styles.tile}>
-      <Text style={styles.value}>{value}</Text>
-      <Text style={styles.label}>{label}</Text>
-    </View>
+    <Card style={styles.tile}>
+      <IconBadge name={icon} tone={tone} size={38} />
+      <View style={styles.text}>
+        <AppText variant="stat">{value}</AppText>
+        <AppText variant="caption" color="textSecondary">
+          {label}
+        </AppText>
+      </View>
+    </Card>
   );
 }
 
 const styles = StyleSheet.create({
   tile: {
     flex: 1,
-    backgroundColor: colors.surface,
-    borderRadius: 18,
-    paddingVertical: 18,
-    paddingHorizontal: 16,
-    gap: 4,
+    gap: spacing.md,
   },
-  value: {
-    color: colors.textPrimary,
-    fontSize: 26,
-    fontWeight: '700',
-  },
-  label: {
-    color: colors.textSecondary,
-    fontSize: 12,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
+  text: {
+    gap: 2,
   },
 });

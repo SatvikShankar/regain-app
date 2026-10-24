@@ -20,7 +20,9 @@ Reference was a fitness-app Figma template, used for *vibe* only (its auth scree
   - Secondary accent: a **warm pastel** (coral/amber/terracotta — designer's judgment) for celebratory/positive moments (level unlocked, encouragement). Never used for anything alarming
   - Same color = same meaning everywhere; no one-off per-screen accents
   - Red-flag/"see a doctor" messaging uses a distinct color, separate from both accents and from a true error-state red
-- Exact hex values: finalize visually on device during build, not pre-specified
+- Exact hex values live in `theme/colors.ts` (palette → semantic tokens → tones); tune there on device
+- Extra neutral hues (lavender, sage) exist for decorative widgets/charts only — they carry no status meaning
+- **Motion**: spring-based and UI-thread (Reanimated). Taps spring down slightly (PressableScale) with a light haptic; content rises in with a short stagger (FadeIn); intake questions slide in the direction of travel; level sections expand with a layout glide. All tuned in `theme/motion.ts`
 
 ## Navigation
 - **Home-centric, NO bottom bar** (decided/built after Step 5; reverses the earlier "persistent bar on every screen" instinct). The app is a single native stack with **Home as the hub** — Home lists all programs and the progress widgets, and is the only place you start a new program ("all roads lead home"). Every other screen is immersive and reached from Home. This is the deliberate move toward a fluid, uncluttered feel.
@@ -28,14 +30,14 @@ Reference was a fitness-app Figma template, used for *vibe* only (its auth scree
   - Intake's header = back-to-previous-question (left) + quit-to-Home with a confirm (right).
   - Program (saved), Exercise Detail, Check-in, Region Select carry the header; the preview Program keeps only Save/Redo; the red-flag detour keeps its own Home / Start-over buttons.
 - Must fully support Android hardware/gesture back. Back mid-intake → previous question; back must never unexpectedly exit the app mid-flow.
-- **Screen transitions**: on Android the native stack slide can flash white at the edge. Partly addressed (native root + stack `contentStyle` painted the plum background via `expo-system-ui`). Full transition polish is Step 7 — revisit `animation` options there if any flash remains.
-- Icons in the header are text placeholders for now; Step 7's design-system pass swaps in a real icon set and may extract a `theme.ts` (colours/spacing currently live in `components/ScreenContainer`).
+- **Screen transitions** (native, set in `navigation/RootNavigator`): horizontal push (`ios_from_right`) by default; Loading and Detour fade (state changes, not places); Check-in slides up (a short task sheet). Native root + `contentStyle` are painted plum so edges never flash white.
+- Header controls are round icon buttons (Lucide via `components/primitives/Icon`).
 
 ---
 
 ## Screens
 
-### 1. Home (default landing, bottom nav visible)
+### 1. Home (default landing — the hub; no header, no bottom bar)
 The motivational dashboard. Two states:
 
 **No programs yet (empty state):**
@@ -89,7 +91,7 @@ Connections: ← Home / start over.
 ### 6. Program (the working hub for one program)
 - Top: issue/region label + current level + level name (from `LevelInfo`)
 - Levels laid out: current/active level emphasized; future locked levels visible but locked (clear locked affordance); earlier levels shown as completed/skipped (visible, with note that their exercises remain available)
-- Each level lists its **exercise names only** — no descriptions, not cluttered. Names come from looking up `selectedExercises` IDs against `backProgram.ts`
+- Each level lists its **exercise names only** — no descriptions, not cluttered. Names come from looking up `selectedExercises` IDs against the region's exercise list (`data/regions/<region>/exercises.ts`)
 - **Logging**: a single one-tap action ("Log today's session" / "I did this") → opens Check-in. No guided session player (deferred to V2). User does exercises on their own, referencing detail screens.
 - **Progress section** lives within this screen (not a separate nav destination): session history / levels reached for this program, derived from `sessionLog`
 - If started above Level 1: the skip disclaimer shows here
@@ -115,12 +117,8 @@ Connections: → Program (with possible level-unlock moment).
 ---
 
 ## Components (reusable, built)
-- `OptionCard` (single/multi select, with cyan selected state)
-- `ScreenHeader` (unified back-left / Home-right header; replaced the old BottomNav)
-- `StatTile` (calm Home progress-reflection tile)
-- `ProgressDots` (intake step progress)
-- `ProgramCard` (home program list + quick-continue)
-- `LevelSection` (program screen, with locked/active/completed states)
-- `PrimaryButton` (rounded, cyan fill)
-- `LoadingState` (the generating screen)
-- Building these is straightforward; the real work is tuning feel on-device — expect iteration in the polish pass.
+**Primitives** (`components/primitives/`): `Screen` (safe areas, gutter, pinned footer), `AppText` (typographic roles), `Card` (glassy surface, optional press), `Button` (primary / secondary / warm / ghost), `Chip`, `Icon` (semantic names → Lucide), `IconBadge` (tinted icon container — the widget motif), `IconButton`, `PressableScale` (spring press + haptic), `FadeIn` (staggered entrance).
+
+**Domain** (`components/`): `ScreenHeader`, `OptionCard`, `ProgressDots` (animated), `ProgramCard` (with level track), `StatTile`, `LevelSection` (animated expand, status badge, "Current" pill), `RegionCard`, `BreathingOrb` (loading visual), `Moment` (post-action celebration/confirmation).
+
+Tuning feel on-device is the ongoing work — expect iteration.

@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Program — edge cases</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;background:#0F0B11}
+*{box-sizing:border-box}
+.scr{width:412px;height:915px;background:#161118;color:#F4EDEA;font-family:Figtree,system-ui,sans-serif;position:relative;overflow:hidden;display:flex;flex-direction:column}
+.top{flex:none;background:#1B151E;box-shadow:0 10px 24px -14px rgba(0,0,0,.7);position:relative;z-index:1}
+.safe{height:44px}
+.hdr{height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 12px;gap:8px}
+.ib{width:44px;height:44px;border-radius:999px;background:#2B2230;border:0;color:#F4EDEA;display:flex;align-items:center;justify-content:center;padding:0;flex:none}
+.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.main{flex:1;min-height:0;padding:16px 20px 0;display:flex;flex-direction:column;gap:10px;overflow:hidden}
+.btn{height:56px;width:100%;border-radius:999px;border:0;font:700 17px/20px Figtree,system-ui,sans-serif;display:flex;align-items:center;justify-content:center;gap:10px;padding:0 24px}
+.bp{background:#9CD3B2;color:#10241A}
+.cap{font:500 13px/18px Figtree,sans-serif;color:#9A8D95;margin:0}
+.lv{background:#211A24;border-radius:24px;box-shadow:0 1px 0 rgba(255,255,255,.035) inset,0 14px 32px -12px rgba(0,0,0,.55);display:flex;flex-direction:column}
+.lh{display:flex;align-items:center;gap:14px;padding:14px 16px;border:0;background:transparent;color:#F4EDEA;text-align:left;width:100%;font-family:Figtree,sans-serif}
+.nt{width:40px;height:40px;border-radius:14px;display:flex;align-items:center;justify-content:center;font:700 16px/1 Figtree,sans-serif;flex:none;background:#2B2230;color:#C3B7BD}
+.ln{font:600 16px/21px Figtree,sans-serif}
+.ex{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:18px;background:#2B2230;border:0;color:#F4EDEA;text-align:left;width:100%;font-family:Figtree,sans-serif;min-height:56px}
+.exn{font:600 15px/20px Figtree,sans-serif}
+.exm{font:500 13px/18px Figtree,sans-serif;color:#9A8D95;display:flex;align-items:center;gap:8px}
+.ch{width:18px;height:18px;color:#9A8D95}
+.tg{height:20px;padding:0 7px;border-radius:7px;background:rgba(141,187,221,.14);color:#A9CDE8;font:600 11px/20px Figtree,sans-serif}
+</style>
+</helmet>
+<div class="scr">
+  <div class="top">
+    <div class="safe"></div>
+    <div class="hdr">
+      <button class="ib" aria-label="Back to Home"><svg class="ic" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"></path></svg></button>
+      <span style="flex:1;min-width:0;font:600 16px/20px Figtree,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center">Lower back after the deadlift strain in September, evenings only</span>
+      <button class="ib" aria-label="Program options"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg></button>
+    </div>
+  </div>
+  <div class="main">
+    <div class="lv">
+      <button class="lh" aria-expanded="false">
+        <span class="nt" style="background:rgba(156,211,178,.12);color:#9CD3B2"><svg class="ic" viewBox="0 0 24 24" style="width:18px;height:18px;stroke-width:2.6" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>
+        <span style="flex:1;display:flex;flex-direction:column;gap:2px;min-width:0"><span class="ln" style="color:#C3B7BD">Gentle Mobility, Stretching &amp; Relief</span><span class="cap">Unlocked · open anytime</span></span>
+        <svg class="ic ch" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+      </button>
+    </div>
+    <div class="lv">
+      <button class="lh" aria-expanded="false">
+        <span class="nt" style="background:rgba(156,211,178,.12);color:#9CD3B2"><svg class="ic" viewBox="0 0 24 24" style="width:18px;height:18px;stroke-width:2.6" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>
+        <span style="flex:1;display:flex;flex-direction:column;gap:2px;min-width:0"><span class="ln" style="color:#C3B7BD">Activation &amp; Stability</span><span class="cap">Unlocked · open anytime</span></span>
+        <svg class="ic ch" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+      </button>
+    </div>
+    <div class="lv" style="box-shadow:inset 0 0 0 1.5px rgba(156,211,178,.45),0 14px 32px -12px rgba(0,0,0,.55)">
+      <button class="lh" aria-expanded="true">
+        <span class="nt" style="background:#9CD3B2;color:#10241A">3</span>
+        <span style="flex:1;display:flex;flex-direction:column;gap:2px;min-width:0"><span class="ln">Strength &amp; Functional Loading</span><span class="cap" style="color:#C3B7BD">Current level · 8 exercises</span></span>
+        <svg class="ic ch" viewBox="0 0 24 24" style="transform:rotate(180deg)" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+      </button>
+      <div style="display:flex;flex-direction:column;gap:6px;padding:0 10px 10px">
+        <button class="ex"><span style="flex:1;display:flex;flex-direction:column"><span class="exn">Standing Good Morning</span><span class="exm">3 sets · 10 reps</span></span><svg class="ic ch" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></button>
+        <button class="ex"><span style="flex:1;display:flex;flex-direction:column"><span class="exn">Single-Leg Romanian Deadlift</span><span class="exm">3 sets · 8 reps</span></span><svg class="ic ch" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></button>
+        <button class="ex"><span style="flex:1;display:flex;flex-direction:column"><span class="exn">Reverse Hyperextension</span><span class="exm">3 sets · 10 reps · hold 2s</span></span><svg class="ic ch" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></button>
+        <button class="ex"><span style="flex:1;display:flex;flex-direction:column"><span class="exn">Resistance Band Row</span><span class="exm">3 sets · 12 reps <span class="tg">Band</span></span></span><svg class="ic ch" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></button>
+        <button class="ex"><span style="flex:1;display:flex;flex-direction:column"><span class="exn">Plank</span><span class="exm">3 sets · hold 30s</span></span><svg class="ic ch" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></button>
+        <button class="ex"><span style="flex:1;display:flex;flex-direction:column"><span class="exn">Side Plank</span><span class="exm">3 sets · hold 20s</span></span><svg class="ic ch" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></button>
+        <button class="ex"><span style="flex:1;display:flex;flex-direction:column"><span class="exn">Single-Leg Glute Bridge</span><span class="exm">3 sets · 10 reps · hold 2s</span></span><svg class="ic ch" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></button>
+        <button class="ex"><span style="flex:1;display:flex;flex-direction:column"><span class="exn">Bird-Dog Square</span><span class="exm">3 sets · 6 reps</span></span><svg class="ic ch" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></button>
+      </div>
+    </div>
+  </div>
+  <div style="position:absolute;left:0;right:0;bottom:0;padding:36px 20px 28px;background:linear-gradient(rgba(22,17,24,0),#161118 40%)">
+    <button class="btn bp"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>Log today's session</button>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":412,"height":915}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

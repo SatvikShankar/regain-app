@@ -1,10 +1,13 @@
 // Selectable option card for intake questions. Works for both single-select
-// (radio behavior) and multi-select (checkbox behavior) — the parent owns the
-// selection logic; this just renders a label and a selected/unselected state.
-// Selected uses the cyan accent (same meaning everywhere per SCREENS.md).
+// (radio) and multi-select (checkbox) — the parent owns selection logic; this
+// renders a label and a selected state. Selected = cyan (same meaning everywhere).
 
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { colors } from './ScreenContainer';
+import { StyleSheet, View } from 'react-native';
+import Animated, { ZoomIn } from 'react-native-reanimated';
+import { colors, radii, spacing } from '../theme';
+import AppText from './primitives/AppText';
+import Icon from './primitives/Icon';
+import PressableScale from './primitives/PressableScale';
 
 export default function OptionCard({
   label,
@@ -18,13 +21,12 @@ export default function OptionCard({
   mode?: 'single' | 'multi';
 }) {
   return (
-    <Pressable
+    <PressableScale
       onPress={onPress}
-      style={({ pressed }) => [
-        styles.card,
-        selected && styles.cardSelected,
-        pressed && styles.pressed,
-      ]}
+      haptic="selection"
+      accessibilityRole={mode === 'single' ? 'radio' : 'checkbox'}
+      accessibilityState={{ checked: selected }}
+      style={[styles.card, selected && styles.cardSelected]}
     >
       <View
         style={[
@@ -33,10 +35,16 @@ export default function OptionCard({
           selected && styles.indicatorSelected,
         ]}
       >
-        {selected ? <Text style={styles.check}>{mode === 'single' ? '●' : '✓'}</Text> : null}
+        {selected ? (
+          <Animated.View entering={ZoomIn.springify().damping(14)}>
+            <Icon name="check" size={15} strokeWidth={3} color={colors.onAccent} />
+          </Animated.View>
+        ) : null}
       </View>
-      <Text style={[styles.label, selected && styles.labelSelected]}>{label}</Text>
-    </Pressable>
+      <AppText variant={selected ? 'bodyStrong' : 'body'} style={styles.label}>
+        {label}
+      </AppText>
+    </PressableScale>
   );
 }
 
@@ -45,50 +53,36 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.surface,
-    borderRadius: 18,
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-    gap: 14,
+    borderRadius: radii.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.md,
+    gap: spacing.md,
   },
   cardSelected: {
-    backgroundColor: '#2E3B40', // cyan-tinted elevated surface
-    borderWidth: 1.5,
-    borderColor: colors.accent,
-  },
-  pressed: {
-    opacity: 0.85,
+    backgroundColor: colors.accentSoft,
+    borderColor: colors.accentBorder,
   },
   indicator: {
-    width: 24,
-    height: 24,
+    width: 26,
+    height: 26,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
-    borderColor: colors.textSecondary,
+    borderColor: colors.track,
   },
   radio: {
-    borderRadius: 12,
+    borderRadius: 13,
   },
   checkbox: {
-    borderRadius: 8,
+    borderRadius: 9,
   },
   indicatorSelected: {
     borderColor: colors.accent,
     backgroundColor: colors.accent,
   },
-  check: {
-    color: '#0E1416',
-    fontSize: 13,
-    fontWeight: '900',
-    lineHeight: 16,
-  },
   label: {
     flex: 1,
-    color: colors.textPrimary,
-    fontSize: 15,
-    lineHeight: 21,
-  },
-  labelSelected: {
-    fontWeight: '600',
   },
 });

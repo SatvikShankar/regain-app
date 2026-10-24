@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Settings</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;background:#0F0B11}
+*{box-sizing:border-box}
+.scr{width:412px;height:915px;background:radial-gradient(120% 55% at 50% -12%,#2A1C2E 0%,#161118 62%);color:#F4EDEA;font-family:Figtree,system-ui,sans-serif;position:relative;overflow:hidden;display:flex;flex-direction:column}
+.safe{height:44px;flex:none}
+.hdr{height:56px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 12px;gap:8px}
+.ib{width:44px;height:44px;border-radius:999px;background:#211A24;border:0;color:#F4EDEA;display:flex;align-items:center;justify-content:center;padding:0;flex:none}
+.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.main{flex:1;min-height:0;padding:12px 20px 0;display:flex;flex-direction:column;gap:20px;overflow:hidden}
+.grp{display:flex;flex-direction:column;gap:8px}
+.gl{font:600 13px/18px Figtree,sans-serif;color:#9A8D95;margin:0;padding-left:4px}
+.card{background:#211A24;border-radius:28px;padding:6px;box-shadow:0 1px 0 rgba(255,255,255,.035) inset,0 14px 32px -12px rgba(0,0,0,.55);display:flex;flex-direction:column}
+.row{display:flex;align-items:center;gap:14px;min-height:60px;padding:10px 14px;border:0;background:transparent;color:#F4EDEA;border-radius:22px;text-align:left;width:100%;font-family:Figtree,sans-serif}
+.ti{width:40px;height:40px;border-radius:14px;background:#2B2230;color:#C3B7BD;display:flex;align-items:center;justify-content:center;flex:none}
+.lb{font:600 16px/20px Figtree,sans-serif;margin:0}
+.cap{font:500 13px/18px Figtree,sans-serif;color:#9A8D95;margin:0}
+.ch{width:20px;height:20px;color:#9A8D95}
+</style>
+</helmet>
+<div class="scr">
+  <div class="safe"></div>
+  <div class="hdr">
+    <button class="ib" aria-label="Back"><svg class="ic" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"></path></svg></button>
+    <span class="lb" style="font-size:17px">Settings</span>
+    <span style="width:44px"></span>
+  </div>
+  <div class="main">
+    <div class="grp">
+      <p class="gl">You</p>
+      <div class="card">
+        <button class="row">
+          <span class="ti"><svg class="ic" viewBox="0 0 24 24" style="width:20px;height:20px" aria-hidden="true"><circle cx="12" cy="8" r="5"></circle><path d="M20 21a8 8 0 0 0-16 0"></path></svg></span>
+          <span style="flex:1;display:flex;flex-direction:column;gap:2px"><span class="lb">Name</span><span class="cap">Meera</span></span>
+          <svg class="ic ch" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="grp">
+      <p class="gl">Reminders</p>
+      <div class="card">
+        <div class="row">
+          <span class="ti"><svg class="ic" viewBox="0 0 24 24" style="width:20px;height:20px" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg></span>
+          <span style="flex:1;display:flex;flex-direction:column;gap:2px;min-width:0"><label for="rm" class="lb">Gentle reminders</label><span class="cap">Pick days and a time. We never mention missed days.</span></span>
+          <button id="rm" role="switch" aria-checked="false" aria-label="Gentle reminders" style="width:52px;height:32px;border-radius:999px;border:0;background:#372C3D;padding:4px;display:flex;align-items:center;flex:none"><span style="width:24px;height:24px;border-radius:999px;background:#9A8D95;display:block"></span></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grp">
+      <p class="gl">Your data</p>
+      <div class="card">
+        <button class="row">
+          <span class="ti"><svg class="ic" viewBox="0 0 24 24" style="width:20px;height:20px" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="M7 10l5 5 5-5"></path><path d="M12 15V3"></path></svg></span>
+          <span style="flex:1;display:flex;flex-direction:column;gap:2px;min-width:0"><span class="lb">Export my data</span><span class="cap">A file you can keep or move to a new phone</span></span>
+          <svg class="ic ch" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
+        </button>
+        <button class="row">
+          <span class="ti"><svg class="ic" viewBox="0 0 24 24" style="width:20px;height:20px" aria-hidden="true"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg></span>
+          <span style="flex:1;display:flex;flex-direction:column;gap:2px;min-width:0"><span class="lb">Delete all data</span><span class="cap">Programs, sessions and your name</span></span>
+          <svg class="ic ch" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
+        </button>
+      </div>
+      <p class="cap" style="padding:4px 4px 0">Everything lives only on this phone. There's no account and nothing is sent anywhere except your answers when a program is generated.</p>
+    </div>
+
+    <div class="grp">
+      <p class="gl">About</p>
+      <div class="card">
+        <button class="row">
+          <span class="ti"><svg class="ic" viewBox="0 0 24 24" style="width:20px;height:20px" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></span>
+          <span style="flex:1;display:flex;flex-direction:column;gap:2px;min-width:0"><span class="lb">About Regain</span><span class="cap">A companion for home exercise, not a medical service</span></span>
+          <svg class="ic ch" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":412,"height":915}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

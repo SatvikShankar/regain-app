@@ -12,59 +12,49 @@
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  Alert,
-  BackHandler,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Alert, BackHandler, StyleSheet, TextInput, View } from 'react-native';
+import Animated, { FadeInLeft, FadeInRight } from 'react-native-reanimated';
 import OptionCard from '../components/OptionCard';
-import PrimaryButton from '../components/PrimaryButton';
 import ProgressDots from '../components/ProgressDots';
 import ScreenHeader from '../components/ScreenHeader';
-import { colors, screenBottomPadding } from '../components/ScreenContainer';
-import { backIntakeQuestions, backIntakeStartQuestionId } from '../data/intake/backIntake';
+import AppText from '../components/primitives/AppText';
+import Button from '../components/primitives/Button';
+import Screen from '../components/primitives/Screen';
 import { RootStackParamList } from '../navigation/types';
+import { colors, durations, fonts, radii, screenGutter, spacing } from '../theme';
 import { IntakeQuestion, IntakeQuestionResponse } from '../types/intake';
 import {
   COMPLETE,
   RED_FLAG_DETOUR,
+  AnswerMap,
   SelectedOption,
   buildIntakeResult,
-  detectRedFlag,
-  getBranchLengths,
+  detectDetour,
+  detourItems,
+  estimateTotalQuestions,
   getNextQuestionId,
   getQuestionById,
   isExclusiveOption,
 } from '../utils/intakeEngine';
-
-// Region → question tree. Only Back is built; Neck is scaffold-only and isn't
-// reachable here yet, so we default to Back.
-function getIntakeData(region: string) {
-  return {
-    questions: backIntakeQuestions,
-    startId: backIntakeStartQuestionId,
-  };
-}
+import { getRegionContent } from '../utils/regionContent';
 
 type Answer = { selectedOption: SelectedOption; freeText: string };
 
 export default function IntakeScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const route = useRoute<RouteProp<RootStackParamList, 'Intake'>>();
-  const region = route.params?.region ?? 'back';
-
-  const { questions, startId } = useMemo(() => getIntakeData(region), [region]);
+  const { region } = route.params;
+  // The region's question tree, from the registry. Only built regions are
+  // selectable, so content is always present; an empty tree renders nothing.
+  const content = getRegionContent(region);
+  const questions = content?.intake.questions ?? [];
+  const startId = content?.intake.startQuestionId ?? '';
 
   const [currentId, setCurrentId] = useState(startId);
   const [history, setHistory] = useState<string[]>([]); // visited ids, excluding current
   const [answers, setAnswers] = useState<Record<string, Answer>>({});
+  // Which way the question slides in: forward from the right, back from the left.
+  const [direction, setDirection] = useState<'forward' | 'back'>('forward');
 
   // Local working copy of the current question's answer.
   const [selectedOption, setSelectedOption] = useState<SelectedOption>(null);
@@ -88,15 +78,17 @@ export default function IntakeScreen() {
 
   // ---- Progress (derived from data, never hardcoded) ----
   const path = useMemo(() => [...history, currentId], [history, currentId]);
-  const branch = useMemo(() => {
-    for (const id of path) {
-      const q = getQuestionById(questions, id);
-      if (q?.branch === 'diagnosed' || q?.branch === 'undiagnosed') return q.branch;
-    }
-    return undefined;
-  }, [path, questions]);
-  const lengths = useMemo(() => getBranchLengths(questions), [questions]);
-  const total = branch ? lengths[branch] : Math.max(lengths.diagnosed, lengths.undiagnosed);
+  // Answers ON THE CURRENT PATH only — if the user went back and changed an
+  // earlier answer, answers from the abandoned branch must not steer routing.
+  const pathAnswers = useMemo(() => {
+    const map: AnswerMap = {};
+    for (const id of history) map[id] = answers[id]?.selectedOption ?? null;
+    return map;
+  }, [history, answers]);
+  const total = useMemo(
+    () => estimateTotalQuestions(questions, startId, pathAnswers),
+    [questions, startId, pathAnswers]
+  );
 
   // ---- Validation ----
   const canContinue = (() => {
@@ -142,12 +134,15 @@ export default function IntakeScreen() {
     };
     setAnswers(updated);
 
-    const next = getNextQuestionId(question, selectedOption);
+    const next = getNextQuestionId(question, selectedOption, pathAnswers);
 
     if (next === RED_FLAG_DETOUR) {
-      const { severity } = detectRedFlag(question, selectedOption);
-      if (__DEV__) console.log('[Regain] red flag →', severity ?? 'standard');
-      navigation.navigate('RedFlagDetour', { severity: severity ?? 'standard' });
+      const reason = detectDetour(question, selectedOption, pathAnswers) ?? 'standard';
+      if (__DEV__) console.log('[Regain] detour →', reason);
+      navigation.navigate('RedFlagDetour', {
+        severity: reason,
+        items: detourItems(question, selectedOption),
+      });
       return;
     }
 
@@ -171,6 +166,7 @@ export default function IntakeScreen() {
       return;
     }
 
+    setDirection('forward');
     setHistory((h) => [...h, currentId]);
     setCurrentId(next);
   };
@@ -179,6 +175,7 @@ export default function IntakeScreen() {
   const goToPrevious = useCallback(() => {
     if (history.length === 0) return false;
     const prev = history[history.length - 1];
+    setDirection('back');
     setHistory((h) => h.slice(0, -1));
     setCurrentId(prev);
     return true;
@@ -211,118 +208,120 @@ export default function IntakeScreen() {
       ? 'Type your answer here'
       : 'Anything else you’d like to add? (optional)');
 
+  const entering = (direction === 'forward' ? FadeInRight : FadeInLeft).duration(durations.normal);
+
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
-      <KeyboardAvoidingView
-        style={styles.flex}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
-        <ScreenHeader onBack={onBackPress} onHome={confirmQuit} />
-        <View style={styles.progressRow}>
-          <ProgressDots current={path.length} total={total} />
-        </View>
+    <Screen
+      keyboardAware
+      header={
+        <>
+          <ScreenHeader onBack={onBackPress} onHome={confirmQuit} />
+          <View style={styles.progressRow}>
+            <ProgressDots current={path.length} total={total} />
+          </View>
+        </>
+      }
+      footer={<Button label="Continue" onPress={onContinue} disabled={!canContinue} />}
+      contentStyle={styles.content}
+    >
+      <Animated.View key={currentId} entering={entering}>
+        {question.introText ? (
+          <AppText variant="smallStrong" color="textSecondary" style={styles.intro}>
+            {question.introText}
+          </AppText>
+        ) : null}
+        <AppText variant="eyebrow" color="textTertiary">
+          Question {path.length} of {Math.max(total, path.length)}
+        </AppText>
+        <AppText variant="title" style={styles.questionText}>
+          {question.questionText}
+        </AppText>
 
-        <ScrollView
-          style={styles.flex}
-          contentContainerStyle={styles.scrollContent}
-          keyboardShouldPersistTaps="handled"
-        >
-          <Text style={styles.questionText}>{question.questionText}</Text>
+        {question.type === 'multiSelect' ? (
+          <AppText variant="small" color="textSecondary" style={styles.hint}>
+            Select all that apply.
+          </AppText>
+        ) : null}
 
-          {question.type !== 'freeTextOnly' ? (
-            <View style={styles.options}>
-              {question.options?.map((opt) => {
-                const isSelected =
-                  question.type === 'multiSelect'
-                    ? Array.isArray(selectedOption) && selectedOption.includes(opt.id)
-                    : selectedOption === opt.id;
-                return (
-                  <OptionCard
-                    key={opt.id}
-                    label={opt.label}
-                    selected={isSelected}
-                    mode={question.type === 'multiSelect' ? 'multi' : 'single'}
-                    onPress={() =>
-                      question.type === 'multiSelect'
-                        ? toggleMulti(opt.id)
-                        : selectSingle(opt.id)
-                    }
-                  />
-                );
-              })}
-            </View>
-          ) : null}
+        {question.type !== 'freeTextOnly' ? (
+          <View style={styles.options}>
+            {question.options?.map((opt) => {
+              const isSelected =
+                question.type === 'multiSelect'
+                  ? Array.isArray(selectedOption) && selectedOption.includes(opt.id)
+                  : selectedOption === opt.id;
+              return (
+                <OptionCard
+                  key={opt.id}
+                  label={opt.label}
+                  selected={isSelected}
+                  mode={question.type === 'multiSelect' ? 'multi' : 'single'}
+                  onPress={() =>
+                    question.type === 'multiSelect' ? toggleMulti(opt.id) : selectSingle(opt.id)
+                  }
+                />
+              );
+            })}
+          </View>
+        ) : null}
 
-          {showFreeText ? (
-            <TextInput
-              style={[
-                styles.freeText,
-                question.type === 'freeTextOnly' && styles.freeTextOnly,
-              ]}
-              value={freeText}
-              onChangeText={setFreeText}
-              placeholder={freeTextPlaceholder}
-              placeholderTextColor={colors.textSecondary}
-              multiline
-            />
-          ) : null}
-        </ScrollView>
-
-        <View style={styles.footer}>
-          <PrimaryButton label="Continue" onPress={onContinue} disabled={!canContinue} />
-        </View>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+        {showFreeText ? (
+          <TextInput
+            style={[styles.freeText, question.type === 'freeTextOnly' && styles.freeTextOnly]}
+            value={freeText}
+            onChangeText={setFreeText}
+            placeholder={freeTextPlaceholder}
+            placeholderTextColor={colors.textTertiary}
+            selectionColor={colors.accent}
+            cursorColor={colors.accent}
+            maxFontSizeMultiplier={1.4}
+            multiline
+          />
+        ) : null}
+      </Animated.View>
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  flex: {
-    flex: 1,
-  },
   progressRow: {
-    paddingHorizontal: 24,
-    paddingTop: 8,
-    paddingBottom: 4,
+    paddingHorizontal: screenGutter,
+    paddingBottom: spacing.xs,
   },
-  scrollContent: {
-    paddingHorizontal: 24,
-    paddingTop: 20,
-    paddingBottom: 24,
+  content: {
+    paddingTop: spacing.lg,
+  },
+  intro: {
+    marginBottom: spacing.sm,
   },
   questionText: {
-    color: colors.textPrimary,
-    fontSize: 23,
-    fontWeight: '700',
-    lineHeight: 30,
-    marginBottom: 24,
+    marginTop: spacing.xs,
+    marginBottom: spacing.xl,
+  },
+  hint: {
+    marginTop: -spacing.md,
+    marginBottom: spacing.md,
   },
   options: {
-    gap: 12,
+    gap: spacing.sm,
   },
   freeText: {
     backgroundColor: colors.surface,
-    borderRadius: 16,
-    paddingHorizontal: 16,
-    paddingTop: 14,
-    paddingBottom: 14,
+    borderRadius: radii.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+    paddingHorizontal: spacing.md,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.md,
     color: colors.textPrimary,
-    fontSize: 15,
-    minHeight: 52,
-    marginTop: 16,
+    fontFamily: fonts.regular,
+    fontSize: 16,
+    minHeight: 56,
+    marginTop: spacing.md,
   },
   freeTextOnly: {
-    minHeight: 120,
+    minHeight: 140,
     textAlignVertical: 'top',
     marginTop: 0,
-  },
-  footer: {
-    paddingHorizontal: 24,
-    paddingTop: 12,
-    paddingBottom: screenBottomPadding,
   },
 });

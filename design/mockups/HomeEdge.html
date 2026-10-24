@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Home — edge cases</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;background:#0F0B11}
+*{box-sizing:border-box}
+.scr{width:412px;height:915px;background:#161118;color:#F4EDEA;font-family:Figtree,system-ui,sans-serif;position:relative;overflow:hidden;display:flex;flex-direction:column}
+.safe{height:44px;flex:none}
+.hdr{height:56px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 12px 0 20px;gap:8px}
+.ib{width:44px;height:44px;border-radius:999px;background:#211A24;border:0;color:#F4EDEA;display:flex;align-items:center;justify-content:center;padding:0;flex:none}
+.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.main{flex:1;min-height:0;padding:4px 20px 0;display:flex;flex-direction:column;gap:12px;overflow:hidden}
+.card{background:#211A24;border-radius:28px;padding:20px;box-shadow:0 1px 0 rgba(255,255,255,.035) inset,0 14px 32px -12px rgba(0,0,0,.55)}
+.cap{font:500 13px/18px Figtree,sans-serif;color:#9A8D95;margin:0}
+.lb{font:600 15px/20px Figtree,sans-serif;margin:0}
+.seg{display:flex;gap:6px}
+.seg i{flex:1;height:6px;border-radius:99px;background:#2B2230}
+.nm{margin:0;font:600 18px/24px Figtree,sans-serif;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.more{width:36px;height:36px;border-radius:999px;border:0;background:transparent;color:#9A8D95;display:flex;align-items:center;justify-content:center;margin:-6px -8px 0 0;flex:none}
+.mi{display:flex;align-items:center;gap:12px;height:52px;padding:0 16px;border:0;background:transparent;color:#F4EDEA;font:600 16px/20px Figtree,sans-serif;border-radius:16px;width:100%;text-align:left}
+</style>
+</helmet>
+<div class="scr">
+  <div class="safe"></div>
+  <div class="hdr">
+    <span class="lb">Good evening, Meera</span>
+    <button class="ib" aria-label="Settings"><svg class="ic" viewBox="0 0 24 24"><path d="M20 7h-9"></path><path d="M14 17H5"></path><circle cx="17" cy="17" r="3"></circle><circle cx="7" cy="7" r="3"></circle></svg></button>
+  </div>
+  <div class="main">
+    <div class="card" style="padding:16px 16px 18px;display:flex;flex-direction:column;gap:10px;margin-top:-40px;opacity:.9">
+      <p style="margin:0;font:400 14px/20px Figtree,sans-serif;color:#C3B7BD">Mostly about right. Pain afterwards was none or mild in 7 of 9.</p>
+    </div>
+    <button class="card" style="border:0;color:#F4EDEA;text-align:left;display:flex;align-items:center;gap:14px;padding:14px 16px;font-family:Figtree,sans-serif">
+      <span style="width:44px;height:44px;border-radius:14px;background:rgba(156,211,178,.12);color:#9CD3B2;display:flex;align-items:center;justify-content:center;flex:none"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"></path><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path></svg></span>
+      <span style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:0"><span class="lb">Rough day?</span><span class="cap" style="color:#C3B7BD">A short, gentle set is always here.</span></span>
+      <svg class="ic" viewBox="0 0 24 24" style="color:#9A8D95;width:20px;height:20px" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
+    </button>
+
+    <p class="lb" style="padding:16px 4px 0;color:#C3B7BD">Other programs</p>
+
+    <div class="card" style="display:flex;flex-direction:column;gap:12px;padding:18px 18px 16px">
+      <div style="display:flex;justify-content:space-between;gap:8px">
+        <div style="display:flex;flex-direction:column;gap:4px;min-width:0">
+          <h3 class="nm">Lower back after the deadlift strain in September, evenings only</h3>
+          <p class="cap">Level 3 · Strength &amp; Functional Loading</p>
+        </div>
+        <button class="more" aria-label="Program options"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg></button>
+      </div>
+      <div class="seg"><i style="background:#4A3D50"></i><i style="background:#4A3D50"></i><i style="background:#9CD3B2"></i></div>
+      <p class="cap">3 of 3 · 21 sessions · since 2 Sep</p>
+    </div>
+
+    <div class="card" style="display:flex;flex-direction:column;gap:12px;padding:18px 18px 16px;position:relative">
+      <div style="display:flex;justify-content:space-between;gap:8px">
+        <div style="display:flex;flex-direction:column;gap:4px;min-width:0">
+          <h3 class="nm">Upper back · desk tension</h3>
+          <p class="cap">Level 1 · Gentle Mobility, Stretching &amp; Relief</p>
+        </div>
+        <button class="more" aria-label="Program options" style="background:#2B2230;color:#F4EDEA"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg></button>
+      </div>
+      <div class="seg"><i style="background:#9CD3B2"></i><i></i><i></i></div>
+      <p class="cap">1 of 3 · 2 sessions · since 12 Oct</p>
+    </div>
+
+    <div class="card" style="display:flex;flex-direction:column;gap:12px;padding:18px 18px 16px">
+      <div style="display:flex;justify-content:space-between;gap:8px">
+        <div style="display:flex;flex-direction:column;gap:4px;min-width:0">
+          <h3 class="nm">Back Recovery · 3 Aug</h3>
+          <p class="cap">Level 2 · Activation &amp; Stability</p>
+        </div>
+        <button class="more" aria-label="Program options"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg></button>
+      </div>
+      <div class="seg"><i style="background:#9CD3B2"></i><i style="background:#9CD3B2;opacity:.35"></i><i></i></div>
+      <p class="cap">1 of 3 · 14 sessions · last one 6 weeks ago</p>
+    </div>
+
+    <button style="border:0;background:transparent;color:#C3B7BD;display:flex;align-items:center;justify-content:center;gap:8px;height:48px;font:600 15px/20px Figtree,sans-serif;flex:none">
+      <svg class="ic" viewBox="0 0 24 24" style="width:18px;height:18px" aria-hidden="true"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
+      Start a new program
+    </button>
+  </div>
+
+  <div style="position:absolute;inset:0;background:rgba(8,5,10,.45)"></div>
+  <div role="menu" style="position:absolute;right:28px;top:486px;width:220px;background:#2B2230;border-radius:22px;padding:6px;box-shadow:0 1px 0 rgba(255,255,255,.05) inset,0 20px 50px rgba(0,0,0,.6);display:flex;flex-direction:column">
+    <button class="mi" role="menuitem"><svg class="ic" viewBox="0 0 24 24" style="width:20px;height:20px;color:#C3B7BD" aria-hidden="true"><path d="M21.17 6.81a1 1 0 0 0-3.99-3.99L3.84 16.17a2 2 0 0 0-.5.83l-1.32 4.35a.5.5 0 0 0 .62.62l4.35-1.32a2 2 0 0 0 .83-.5z"></path></svg>Rename</button>
+    <button class="mi" role="menuitem"><svg class="ic" viewBox="0 0 24 24" style="width:20px;height:20px;color:#C3B7BD" aria-hidden="true"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>Delete program</button>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":412,"height":915}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

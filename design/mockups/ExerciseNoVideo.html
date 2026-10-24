@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Exercise — no video</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;background:#0F0B11}
+*{box-sizing:border-box}
+.scr{width:412px;height:915px;background:radial-gradient(120% 55% at 50% -12%,#2A1C2E 0%,#161118 62%);color:#F4EDEA;font-family:Figtree,system-ui,sans-serif;position:relative;overflow:hidden}
+.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.scrim{position:absolute;inset:0;background:rgba(8,5,10,.62)}
+.sheet{position:absolute;left:0;right:0;bottom:0;top:96px;background:#211A24;border-radius:36px 36px 0 0;box-shadow:0 1px 0 rgba(255,255,255,.05) inset,0 -18px 60px rgba(0,0,0,.6);display:flex;flex-direction:column;overflow:hidden}
+.hnd{width:40px;height:5px;border-radius:99px;background:#4A3D50;margin:10px auto 0;flex:none}
+.cap{font:500 13px/18px Figtree,sans-serif;color:#9A8D95;margin:0}
+.st{flex:1;background:#2B2230;border-radius:18px;padding:12px 14px;display:flex;flex-direction:column;gap:2px}
+.sn{font:700 22px/26px Figtree,sans-serif;font-variant-numeric:tabular-nums}
+.sh{font:600 17px/22px Figtree,sans-serif;margin:0}
+.sp{font:400 16px/24px Figtree,sans-serif;color:#C3B7BD;margin:0}
+</style>
+</helmet>
+<div class="scr">
+  <div style="padding:100px 20px 0;opacity:.6" aria-hidden="true">
+    <div style="font:700 30px/36px Figtree,sans-serif">Activation &amp; Stability</div>
+  </div>
+  <div class="scrim"></div>
+  <div class="sheet" role="dialog" aria-label="Glute Bridge">
+    <div class="hnd"></div>
+    <div style="padding:14px 20px 28px;display:flex;flex-direction:column;gap:20px">
+      <div style="height:176px;border-radius:24px;background:#2B2230;position:relative;display:flex;align-items:center;justify-content:center">
+        <svg viewBox="0 0 200 110" style="width:200px;height:110px" aria-hidden="true">
+          <path d="M20 92 H180" stroke="#B6A5EA" stroke-opacity=".3" stroke-width="3" stroke-linecap="round"></path>
+          <circle cx="40" cy="78" r="9" fill="#F3B486"></circle>
+          <path d="M56 82 L112 52 L146 46 L158 84" fill="none" stroke="#B6A5EA" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"></path>
+          <path d="M60 84 L80 88" stroke="#B6A5EA" stroke-width="8" stroke-linecap="round"></path>
+        </svg>
+        <span class="cap" style="position:absolute;left:16px;bottom:12px">Demo coming soon</span>
+        <button aria-label="Close" style="position:absolute;right:12px;top:12px;width:40px;height:40px;border-radius:999px;border:0;background:#211A24;color:#F4EDEA;display:flex;align-items:center;justify-content:center"><svg class="ic" viewBox="0 0 24 24" style="width:20px;height:20px"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <p class="cap">Level 2 · Activation &amp; Stability</p>
+        <h1 style="margin:0;font:700 30px/36px Figtree,sans-serif;letter-spacing:-0.02em">Glute Bridge</h1>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;gap:8px">
+          <div class="st"><span class="sn">3</span><span class="cap">sets</span></div>
+          <div class="st"><span class="sn">12</span><span class="cap">reps</span></div>
+          <div class="st"><span class="sn">2s</span><span class="cap">hold</span></div>
+        </div>
+        <p class="cap" style="padding-left:4px">Start here, adjust as needed.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <h2 class="sh">How to do it</h2>
+        <p class="sp">Lie on your back with knees bent and feet flat on the floor. Lift your hips upward by squeezing your glutes, until your body forms a straight line from shoulders to knees. Hold briefly, then lower with control.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <h2 class="sh">Why it helps</h2>
+        <p class="sp">Strengthens the glutes, which are major stabilizers for your spine and hips. Weak glutes are one of the most common findings in people with ongoing back pain.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":412,"height":915}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

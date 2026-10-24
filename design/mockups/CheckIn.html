@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Check-in</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;background:#0F0B11}
+*{box-sizing:border-box}
+.scr{width:412px;height:915px;background:radial-gradient(120% 55% at 50% -12%,#2A1C2E 0%,#161118 62%);color:#F4EDEA;font-family:Figtree,system-ui,sans-serif;position:relative;overflow:hidden}
+.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.scrim{position:absolute;inset:0;background:rgba(8,5,10,.62)}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:#211A24;border-radius:36px 36px 0 0;box-shadow:0 1px 0 rgba(255,255,255,.05) inset,0 -18px 60px rgba(0,0,0,.6);display:flex;flex-direction:column}
+.hnd{width:40px;height:5px;border-radius:99px;background:#4A3D50;margin:10px auto 0;flex:none}
+.cap{font:500 13px/18px Figtree,sans-serif;color:#9A8D95;margin:0}
+.ql{font:600 16px/22px Figtree,sans-serif;margin:0}
+.sg{display:flex;gap:4px;padding:4px;border-radius:999px;background:#2B2230}
+.sg button{flex:1;height:44px;border-radius:999px;border:0;background:transparent;color:#C3B7BD;font:600 14px/18px Figtree,sans-serif;padding:0 4px}
+.sg button.on{background:#9CD3B2;color:#10241A}
+.chip{height:44px;border-radius:999px;padding:0 16px;background:#2B2230;color:#C3B7BD;border:0;font:600 14px/18px Figtree,sans-serif;display:inline-flex;align-items:center;gap:8px}
+.btn{height:56px;width:100%;border-radius:999px;border:0;font:700 17px/20px Figtree,system-ui,sans-serif;display:flex;align-items:center;justify-content:center;gap:10px;padding:0 24px}
+.bp{background:#9CD3B2;color:#10241A}
+</style>
+</helmet>
+<div class="scr">
+  <div style="padding:120px 20px 0;opacity:.6" aria-hidden="true">
+    <div style="font:700 34px/40px Figtree,sans-serif;letter-spacing:-0.02em">Good evening, Meera</div>
+  </div>
+  <div class="scrim"></div>
+  <div class="sheet" role="dialog" aria-label="Log a session">
+    <div class="hnd"></div>
+    <div style="padding:18px 20px 28px;display:flex;flex-direction:column;gap:24px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <h1 style="margin:0;font:700 26px/32px Figtree,sans-serif;letter-spacing:-0.015em">How did today go?</h1>
+          <p class="cap">Back Recovery · Level 2 · Activation &amp; Stability</p>
+        </div>
+        <button aria-label="Close" style="width:40px;height:40px;border-radius:999px;border:0;background:#2B2230;color:#F4EDEA;display:flex;align-items:center;justify-content:center;flex:none"><svg class="ic" viewBox="0 0 24 24" style="width:20px;height:20px"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <p class="ql">Pain during the session</p>
+        <div class="sg" role="radiogroup"><button role="radio" aria-checked="false">None</button><button class="on" role="radio" aria-checked="true">Mild</button><button role="radio" aria-checked="false">Moderate</button><button role="radio" aria-checked="false">Significant</button></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <p class="ql">Pain afterwards</p>
+        <div class="sg" role="radiogroup"><button class="on" role="radio" aria-checked="true">None</button><button role="radio" aria-checked="false">Mild</button><button role="radio" aria-checked="false">Moderate</button><button role="radio" aria-checked="false">Significant</button></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <p class="ql">How did it feel?</p>
+        <div class="sg" role="radiogroup"><button role="radio" aria-checked="false">Too easy</button><button class="on" role="radio" aria-checked="true">About right</button><button role="radio" aria-checked="false">Too hard</button></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <p class="ql" style="display:flex;justify-content:space-between">Also moved today?<span class="cap">Optional</span></p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="chip" aria-pressed="false">Went for a walk</button>
+          <button class="chip" aria-pressed="false">Other activity</button>
+        </div>
+      </div>
+      <button class="btn bp" style="margin-top:4px">Log session</button>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":412,"height":915}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

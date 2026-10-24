@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Question — warning-sign checklist</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;background:#0F0B11}
+*{box-sizing:border-box}
+.scr{width:412px;height:915px;background:radial-gradient(120% 55% at 50% -12%,#2A1C2E 0%,#161118 62%);color:#F4EDEA;font-family:Figtree,system-ui,sans-serif;position:relative;overflow:hidden;display:flex;flex-direction:column}
+.safe{height:44px;flex:none}
+.hdr{height:56px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 12px;gap:14px}
+.ib{width:44px;height:44px;border-radius:999px;background:#211A24;border:0;color:#F4EDEA;display:flex;align-items:center;justify-content:center;padding:0;flex:none}
+.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.main{flex:1;min-height:0;padding:16px 20px 0;display:flex;flex-direction:column;gap:18px;overflow:hidden}
+.foot{flex:none;padding:12px 20px 28px;display:flex;flex-direction:column;gap:6px}
+.btn{height:56px;width:100%;border-radius:999px;border:0;font:700 17px/20px Figtree,system-ui,sans-serif;display:flex;align-items:center;justify-content:center;gap:10px;padding:0 24px}
+.bp{background:#9CD3B2;color:#10241A}
+.cap{font:500 13px/18px Figtree,sans-serif;color:#9A8D95;margin:0}
+.bar{display:flex;gap:6px}
+.bar i{flex:1;height:6px;border-radius:99px;background:#372C3D}
+.bar i.f{background:#9CD3B2}
+.opt{display:flex;gap:14px;align-items:flex-start;padding:14px 16px;border-radius:20px;background:#211A24;border:0;color:#F4EDEA;text-align:left;width:100%;font:500 15px/21px Figtree,sans-serif}
+.opt.on{background:#21302A;box-shadow:inset 0 0 0 1.5px #9CD3B2}
+.chk{width:22px;height:22px;border-radius:8px;box-shadow:inset 0 0 0 2px #6E6168;flex:none;display:flex;align-items:center;justify-content:center;color:#10241A}
+.on .chk{background:#9CD3B2;box-shadow:none}
+</style>
+</helmet>
+<div class="scr">
+  <div class="safe"></div>
+  <div class="hdr">
+    <button class="ib" aria-label="Previous question"><svg class="ic" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"></path></svg></button>
+    <div style="flex:1;display:flex;flex-direction:column;gap:6px;align-items:center">
+      <div class="bar" style="width:100%"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f" style="opacity:.5"></i><i></i></div>
+      <span class="cap" style="font-size:12px">5 of 6</span>
+    </div>
+    <button class="ib" aria-label="Quit questions"><svg class="ic" viewBox="0 0 24 24"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
+  </div>
+  <div class="main">
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <p class="cap" style="color:#C3B7BD;font-weight:600">A routine check before we choose exercises.</p>
+      <h1 style="margin:0;font:700 26px/32px Figtree,sans-serif;letter-spacing:-0.015em">Do you currently experience any of the following?</h1>
+      <p class="cap">Tick any that apply.</p>
+    </div>
+    <div role="group" style="display:flex;flex-direction:column;gap:8px">
+      <button class="opt" role="checkbox" aria-checked="false"><span class="chk"></span>Numbness, tingling, or progressive weakness in one or both legs</button>
+      <button class="opt" role="checkbox" aria-checked="false"><span class="chk"></span>Any recent changes in bladder or bowel habits alongside your back pain</button>
+      <button class="opt" role="checkbox" aria-checked="false"><span class="chk"></span>Pain that is constant and severe, not relieved by any position or rest</button>
+      <button class="opt" role="checkbox" aria-checked="false"><span class="chk"></span>Unexplained weight loss alongside the back pain</button>
+      <button class="opt" role="checkbox" aria-checked="false"><span class="chk"></span>Fever or feeling generally unwell alongside the back pain</button>
+      <button class="opt" role="checkbox" aria-checked="false"><span class="chk"></span>Recent serious trauma (major fall, car accident, direct blow to the spine)</button>
+      <div style="height:1px;background:rgba(255,236,245,.07);margin:4px 8px"></div>
+      <button class="opt on" role="checkbox" aria-checked="true"><span class="chk"><svg class="ic" viewBox="0 0 24 24" style="width:16px;height:16px;stroke-width:3" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>None of the above</button>
+    </div>
+  </div>
+  <div class="foot">
+    <button class="btn bp">Continue</button>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":412,"height":915}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Regain — Tokens</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;background:#161118}
+*{box-sizing:border-box}
+.sec{font:700 22px/28px Figtree,sans-serif;color:#F4EDEA;margin:0}
+.sw{display:flex;flex-direction:column;gap:10px}
+.chipc{height:96px;border-radius:24px}
+.nm{font:600 15px/20px Figtree,sans-serif;color:#F4EDEA}
+.hx{font:500 13px/18px ui-monospace,Menlo,monospace;color:#9A8D95}
+.use{font:400 13px/18px Figtree,sans-serif;color:#C3B7BD}
+.row{display:grid;grid-template-columns:150px 120px minmax(0,1fr);gap:24px;align-items:baseline;padding:16px 0;border-top:1px solid rgba(255,236,245,.06)}
+.mono{font:500 13px/18px ui-monospace,Menlo,monospace;color:#9A8D95}
+</style>
+</helmet>
+<div style="width:1280px;min-height:1900px;background:#161118;color:#F4EDEA;font-family:Figtree,system-ui,sans-serif;padding:72px 80px;display:flex;flex-direction:column;gap:48px">
+  <div style="display:flex;flex-direction:column;gap:12px">
+    <div style="font:600 14px/20px Figtree,sans-serif;color:#9CD3B2">Design system</div>
+    <h1 style="margin:0;font:700 48px/56px Figtree,sans-serif;letter-spacing:-0.025em">Tokens</h1>
+    <p style="margin:0;font:400 18px/28px Figtree,sans-serif;color:#C3B7BD;max-width:820px">A warm plum-black room, a sage accent for anything you can act on, apricot only for good moments, and ochre only for caution. Every colour means one thing everywhere.</p>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:20px">
+    <h2 class="sec">Surfaces &amp; text</h2>
+    <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:20px">
+      <div class="sw"><div class="chipc" style="background:#161118;box-shadow:inset 0 0 0 1px rgba(255,236,245,.1)"></div><div class="nm">bg</div><div class="hx">#161118</div><div class="use">Screen ground. Top glow: radial #2A1C2E → bg</div></div>
+      <div class="sw"><div class="chipc" style="background:#211A24"></div><div class="nm">surface-1</div><div class="hx">#211A24</div><div class="use">Cards, sheets</div></div>
+      <div class="sw"><div class="chipc" style="background:#2B2230"></div><div class="nm">surface-2</div><div class="hx">#2B2230</div><div class="use">Chips, inputs, rows inside cards</div></div>
+      <div class="sw"><div class="chipc" style="background:#372C3D"></div><div class="nm">surface-3</div><div class="hx">#372C3D</div><div class="use">Tracks, handles, dividers</div></div>
+      <div class="sw"><div class="chipc" style="background:#F4EDEA"></div><div class="nm">text-1</div><div class="hx">#F4EDEA</div><div class="use">Headings, primary text</div></div>
+      <div class="sw"><div class="chipc" style="background:#C3B7BD"></div><div class="nm">text-2</div><div class="hx">#C3B7BD</div><div class="use">Body, secondary</div></div>
+      <div class="sw"><div class="chipc" style="background:#9A8D95"></div><div class="nm">text-3</div><div class="hx">#9A8D95</div><div class="use">Meta, captions. ≥4.5:1 on surface-2</div></div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:20px">
+    <h2 class="sec">Meaning colours</h2>
+    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px">
+      <div class="sw"><div class="chipc" style="background:#9CD3B2;display:flex;align-items:flex-end;padding:16px;color:#10241A;font:700 15px/1 Figtree,sans-serif">Aa on-primary #10241A</div><div class="nm">primary · sage</div><div class="hx">#9CD3B2 · soft rgba(156,211,178,.14)</div><div class="use">Active, selected, the main action. Nothing else.</div></div>
+      <div class="sw"><div class="chipc" style="background:#F3B486;display:flex;align-items:flex-end;padding:16px;color:#2E1A0C;font:700 15px/1 Figtree,sans-serif">Aa on-warm #2E1A0C</div><div class="nm">warm · apricot</div><div class="hx">#F3B486 · soft rgba(243,180,134,.15)</div><div class="use">Celebration, level unlocked, positive moments. Never warnings.</div></div>
+      <div class="sw"><div class="chipc" style="background:#E5CB78;display:flex;align-items:flex-end;padding:16px;color:#2A220A;font:700 15px/1 Figtree,sans-serif">Aa on-caution #2A220A</div><div class="nm">caution · ochre</div><div class="hx">#E5CB78 · soft rgba(229,203,120,.12)</div><div class="use">See-a-doctor screens and the pain nudge only.</div></div>
+      <div class="sw"><div class="chipc" style="background:#E8958F"></div><div class="nm">error · system only</div><div class="hx">#E8958F</div><div class="use">Rare system failures (export failed). Never health copy.</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px">
+      <div class="sw"><div class="chipc" style="background:#B6A5EA;height:64px"></div><div class="nm">deco · lavender</div><div class="hx">#B6A5EA</div><div class="use">"About right", region tiles</div></div>
+      <div class="sw"><div class="chipc" style="background:#8DBBDD;height:64px"></div><div class="nm">deco · sky</div><div class="hx">#8DBBDD</div><div class="use">"Too easy", charts</div></div>
+      <div class="sw"><div class="chipc" style="background:#E2A2BC;height:64px"></div><div class="nm">deco · rose</div><div class="hx">#E2A2BC</div><div class="use">"Too hard", charts</div></div>
+      <div class="use" style="align-self:center">Decorative hues carry no status. They appear in small marks (dots, icons, illustrations), never as large fills or button colours.</div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:56px;align-items:start">
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <h2 class="sec" style="margin-bottom:8px">Type · Figtree (Google Fonts)</h2>
+      <div class="row"><span class="mono">display</span><span class="mono">34/40 · 700</span><span style="font:700 34px/40px Figtree,sans-serif;letter-spacing:-0.02em">Good evening, Meera</span></div>
+      <div class="row"><span class="mono">title</span><span class="mono">26/32 · 700</span><span style="font:700 26px/32px Figtree,sans-serif;letter-spacing:-0.015em">How did this start?</span></div>
+      <div class="row"><span class="mono">heading</span><span class="mono">20/26 · 600</span><span style="font:600 20px/26px Figtree,sans-serif">Activation &amp; Stability</span></div>
+      <div class="row"><span class="mono">body</span><span class="mono">16/24 · 400</span><span style="font:400 16px/24px Figtree,sans-serif;color:#C3B7BD">Lie on your back with knees bent and feet flat on the floor.</span></div>
+      <div class="row"><span class="mono">option</span><span class="mono">16/22 · 500</span><span style="font:500 16px/22px Figtree,sans-serif">I've seen someone but don't have a clear diagnosis</span></div>
+      <div class="row"><span class="mono">label</span><span class="mono">15/20 · 600</span><span style="font:600 15px/20px Figtree,sans-serif">Pain afterwards</span></div>
+      <div class="row"><span class="mono">button</span><span class="mono">17/20 · 700</span><span style="font:700 17px/20px Figtree,sans-serif">Log today's session</span></div>
+      <div class="row"><span class="mono">caption</span><span class="mono">13/18 · 500</span><span style="font:500 13px/18px Figtree,sans-serif;color:#9A8D95">Since 27 Sep · 9 sessions</span></div>
+      <div class="row"><span class="mono">stat</span><span class="mono">40/44 · 700 tnum</span><span style="font:700 40px/44px Figtree,sans-serif;letter-spacing:-0.02em;font-variant-numeric:tabular-nums">14</span></div>
+      <p style="margin:12px 0 0;font:400 14px/21px Figtree,sans-serif;color:#9A8D95">Sizes in sp. At 1.3× font scale: chip rows wrap 2×2, stat widgets stack, nothing has a fixed text height. Secondary text is text-2, never pure white.</p>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:36px">
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <h2 class="sec">Radii</h2>
+        <div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap">
+          <div style="display:flex;flex-direction:column;gap:8px;align-items:center"><div style="width:56px;height:56px;background:#2B2230;border-radius:10px"></div><span class="mono">xs 10</span></div>
+          <div style="display:flex;flex-direction:column;gap:8px;align-items:center"><div style="width:56px;height:56px;background:#2B2230;border-radius:14px"></div><span class="mono">sm 14</span></div>
+          <div style="display:flex;flex-direction:column;gap:8px;align-items:center"><div style="width:56px;height:56px;background:#2B2230;border-radius:20px"></div><span class="mono">md 20</span></div>
+          <div style="display:flex;flex-direction:column;gap:8px;align-items:center"><div style="width:72px;height:56px;background:#2B2230;border-radius:28px 28px 10px 10px"></div><span class="mono">lg 28</span></div>
+          <div style="display:flex;flex-direction:column;gap:8px;align-items:center"><div style="width:72px;height:56px;background:#2B2230;border-radius:36px 36px 0 0"></div><span class="mono">xl 36</span></div>
+          <div style="display:flex;flex-direction:column;gap:8px;align-items:center"><div style="width:72px;height:36px;background:#2B2230;border-radius:999px"></div><span class="mono">pill</span></div>
+        </div>
+        <p class="use" style="margin:0">xs tags · sm small icon tiles · md inputs, option cards (22 for options), rows · lg cards · xl sheet tops · pill buttons, chips</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <h2 class="sec">Spacing</h2>
+        <div style="display:flex;gap:10px;align-items:flex-end">
+          <div style="display:flex;flex-direction:column;gap:6px;align-items:center"><div style="width:4px;height:4px;background:#9CD3B2;border-radius:2px"></div><span class="mono">4</span></div>
+          <div style="display:flex;flex-direction:column;gap:6px;align-items:center"><div style="width:8px;height:8px;background:#9CD3B2;border-radius:2px"></div><span class="mono">8</span></div>
+          <div style="display:flex;flex-direction:column;gap:6px;align-items:center"><div style="width:12px;height:12px;background:#9CD3B2;border-radius:3px"></div><span class="mono">12</span></div>
+          <div style="display:flex;flex-direction:column;gap:6px;align-items:center"><div style="width:16px;height:16px;background:#9CD3B2;border-radius:4px"></div><span class="mono">16</span></div>
+          <div style="display:flex;flex-direction:column;gap:6px;align-items:center"><div style="width:20px;height:20px;background:#9CD3B2;border-radius:5px"></div><span class="mono">20</span></div>
+          <div style="display:flex;flex-direction:column;gap:6px;align-items:center"><div style="width:24px;height:24px;background:#9CD3B2;border-radius:6px"></div><span class="mono">24</span></div>
+          <div style="display:flex;flex-direction:column;gap:6px;align-items:center"><div style="width:32px;height:32px;background:#9CD3B2;border-radius:8px"></div><span class="mono">32</span></div>
+          <div style="display:flex;flex-direction:column;gap:6px;align-items:center"><div style="width:40px;height:40px;background:#9CD3B2;border-radius:10px"></div><span class="mono">40</span></div>
+          <div style="display:flex;flex-direction:column;gap:6px;align-items:center"><div style="width:56px;height:56px;background:#9CD3B2;border-radius:12px"></div><span class="mono">56</span></div>
+        </div>
+        <p class="use" style="margin:0">Screen gutter 20 · card padding 20 · between cards 12 · between sections 32 · safe areas: top 44 (status bar), bottom 24 + 4 (gesture bar). Touch targets ≥ 44.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <h2 class="sec">Depth</h2>
+        <div style="display:flex;gap:20px">
+          <div style="flex:1;height:88px;border-radius:28px;background:#211A24;box-shadow:0 1px 0 rgba(255,255,255,.035) inset,0 14px 32px -12px rgba(0,0,0,.55);padding:16px" class="mono">e1 · cards<br>RN elevation 6</div>
+          <div style="flex:1;height:88px;border-radius:28px;background:#211A24;box-shadow:0 1px 0 rgba(255,255,255,.05) inset,0 -18px 60px rgba(0,0,0,.6);padding:16px" class="mono">e2 · sheets<br>RN elevation 16</div>
+        </div>
+        <p class="use" style="margin:0">Depth comes from surface steps and soft shadow. No hard borders; a 1px top highlight gives cards an edge. Blur: none (scrims are solid rgba(8,5,10,.62)).</p>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:16px">
+    <h2 class="sec">Motion (Reanimated withSpring)</h2>
+    <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px">
+      <div style="background:#211A24;border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:6px"><div class="nm">press</div><div class="mono">stiffness 400 · damping 18</div><div class="use">Scale 0.97 on press-in; every tappable. Light haptic on selections.</div></div>
+      <div style="background:#211A24;border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:6px"><div class="nm">standard</div><div class="mono">stiffness 260 · damping 26</div><div class="use">Sheets, screen pushes, question slides (24px + fade).</div></div>
+      <div style="background:#211A24;border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:6px"><div class="nm">expand</div><div class="mono">stiffness 220 · damping 22</div><div class="use">Level rows, note field, menus. Children stagger 25ms.</div></div>
+      <div style="background:#211A24;border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:6px"><div class="nm">celebrate</div><div class="mono">stiffness 180 · damping 14</div><div class="use">Level unlocked only: the one spring allowed to overshoot.</div></div>
+      <div style="background:#211A24;border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:6px"><div class="nm">fade</div><div class="mono">150–200ms ease-out</div><div class="use">Opacity only: scrims, cross-fading status lines.</div></div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1900}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -9,6 +9,15 @@
     "newArchEnabled": true,
     "android": {
       "package": "com.regain.app"
-    }
+    },
+    "plugins": [
+      "expo-font",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#1E1420"
+        }
+      ]
+    ]
   }
 }

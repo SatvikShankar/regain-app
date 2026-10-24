@@ -2,37 +2,37 @@
 //   left  = one step back (previous screen / previous question) — only when the
 //           previous screen is meaningfully different from Home
 //   right = Home ("all roads lead home")
-//
-// Home itself renders no header. Icons are text placeholders for now; Step 7's
-// design-system pass swaps in a proper icon set.
+// Home itself renders no header. Optional small centred title.
 
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { colors } from './ScreenContainer';
+import { StyleSheet, View } from 'react-native';
+import { screenGutter, spacing } from '../theme';
+import AppText from './primitives/AppText';
+import IconButton from './primitives/IconButton';
 
 export default function ScreenHeader({
   onBack,
   onHome,
+  title,
 }: {
   onBack?: () => void;
   onHome?: () => void;
+  title?: string;
 }) {
   return (
     <View style={styles.row}>
-      {onBack ? (
-        <Pressable onPress={onBack} style={styles.backButton} hitSlop={12}>
-          <Text style={styles.backChevron}>‹</Text>
-        </Pressable>
-      ) : (
-        <View style={styles.backButton} />
-      )}
-
-      <View style={styles.spacer} />
-
-      {onHome ? (
-        <Pressable onPress={onHome} style={styles.homeButton} hitSlop={8}>
-          <Text style={styles.homeText}>Home</Text>
-        </Pressable>
-      ) : null}
+      <View style={styles.side}>
+        {onBack ? <IconButton icon="back" onPress={onBack} accessibilityLabel="Back" /> : null}
+      </View>
+      <View style={styles.center}>
+        {title ? (
+          <AppText variant="smallStrong" color="textSecondary" numberOfLines={1}>
+            {title}
+          </AppText>
+        ) : null}
+      </View>
+      <View style={[styles.side, styles.right]}>
+        {onHome ? <IconButton icon="home" onPress={onHome} accessibilityLabel="Home" /> : null}
+      </View>
     </View>
   );
 }
@@ -41,34 +41,19 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingTop: 4,
-    minHeight: 48,
+    paddingHorizontal: screenGutter - spacing.xxs,
+    paddingTop: spacing.xs,
+    paddingBottom: spacing.xs,
+    minHeight: 60,
   },
-  backButton: {
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
+  side: {
+    width: 48,
   },
-  backChevron: {
-    color: colors.textPrimary,
-    fontSize: 34,
-    fontWeight: '300',
-    marginTop: -6,
+  right: {
+    alignItems: 'flex-end',
   },
-  spacer: {
+  center: {
     flex: 1,
-  },
-  homeButton: {
-    backgroundColor: colors.surface,
-    borderRadius: 14,
-    paddingHorizontal: 16,
-    paddingVertical: 9,
-  },
-  homeText: {
-    color: colors.textSecondary,
-    fontSize: 14,
-    fontWeight: '600',
+    alignItems: 'center',
   },
 });

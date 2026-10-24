@@ -1,11 +1,21 @@
-// A program tile — used on Home (quick-continue) and the Programs list.
-// Tap to open; long-press to trigger a delete (handled by the parent). All
-// text is derived from the stored program at render.
+// A program widget on Home: region badge, name, current level, a level-progress
+// track, and session count. Tap to open; long-press to delete (parent handles).
+// Everything shown is derived from the stored program at render.
 
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { colors, spacing } from '../theme';
 import { StoredProgram } from '../types/program';
-import { getLevelName, getMaxUnlockedLevel, getProgramName } from '../utils/programHelpers';
-import { colors } from './ScreenContainer';
+import {
+  getLevelName,
+  getLevelNumbers,
+  getProgramName,
+  getWorkingLevel,
+} from '../utils/programHelpers';
+import { getRegion } from '../utils/regionContent';
+import AppText from './primitives/AppText';
+import Card from './primitives/Card';
+import Icon from './primitives/Icon';
+import IconBadge from './primitives/IconBadge';
 
 export default function ProgramCard({
   program,
@@ -16,63 +26,73 @@ export default function ProgramCard({
   onPress: () => void;
   onLongPress?: () => void;
 }) {
-  const currentLevel = getMaxUnlockedLevel(program);
-  const levelName = getLevelName(program, currentLevel);
+  const currentLevel = getWorkingLevel(program);
+  const totalLevels = getLevelNumbers(program).length;
   const sessions = program.sessionLog.length;
+  const name = getProgramName(program);
 
   return (
-    <Pressable
-      onPress={onPress}
-      onLongPress={onLongPress}
-      style={({ pressed }) => [styles.card, pressed && styles.pressed]}
-    >
-      <View style={styles.text}>
-        <Text style={styles.name}>{getProgramName(program)}</Text>
-        <Text style={styles.level}>
-          Level {currentLevel} · {levelName}
-        </Text>
-        <Text style={styles.meta}>
-          {sessions} session{sessions === 1 ? '' : 's'} logged
-        </Text>
+    <Card onPress={onPress} onLongPress={onLongPress} accessibilityLabel={`Open ${name}`}>
+      <View style={styles.top}>
+        <IconBadge name={getRegion(program.region)?.icon ?? 'activity'} tone="accent" />
+        <View style={styles.titleBlock}>
+          <AppText variant="subheading" numberOfLines={1}>
+            {name}
+          </AppText>
+          <AppText variant="smallStrong" color="accent" numberOfLines={1}>
+            Level {currentLevel} · {getLevelName(program, currentLevel)}
+          </AppText>
+        </View>
+        <Icon name="forward" color={colors.textTertiary} />
       </View>
-      <Text style={styles.chevron}>›</Text>
-    </Pressable>
+
+      {totalLevels > 0 ? (
+        <View style={styles.track}>
+          {Array.from({ length: totalLevels }).map((_, i) => (
+            <View key={i} style={[styles.step, i < currentLevel && styles.stepReached]} />
+          ))}
+        </View>
+      ) : null}
+
+      <View style={styles.footer}>
+        <AppText variant="caption" color="textSecondary">
+          Level {currentLevel} of {totalLevels}
+        </AppText>
+        <AppText variant="caption" color="textSecondary">
+          {sessions} session{sessions === 1 ? '' : 's'} logged
+        </AppText>
+      </View>
+    </Card>
   );
 }
 
 const styles = StyleSheet.create({
-  card: {
+  top: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.surface,
-    borderRadius: 22,
-    paddingVertical: 20,
-    paddingHorizontal: 20,
+    gap: spacing.sm,
   },
-  pressed: {
-    opacity: 0.85,
-  },
-  text: {
+  titleBlock: {
     flex: 1,
-    gap: 4,
+    gap: 2,
   },
-  name: {
-    color: colors.textPrimary,
-    fontSize: 19,
-    fontWeight: '700',
+  track: {
+    flexDirection: 'row',
+    gap: spacing.xxs + 2,
+    marginTop: spacing.lg,
   },
-  level: {
-    color: colors.accent,
-    fontSize: 14,
-    fontWeight: '600',
+  step: {
+    flex: 1,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: colors.surfaceRaised,
   },
-  meta: {
-    color: colors.textSecondary,
-    fontSize: 13,
+  stepReached: {
+    backgroundColor: colors.accent,
   },
-  chevron: {
-    color: colors.textSecondary,
-    fontSize: 26,
-    marginLeft: 12,
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: spacing.xs,
   },
 });

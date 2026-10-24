@@ -4,21 +4,24 @@
 //
 // Freshness comes from honestly reflecting state, not manufactured novelty: a
 // time-of-day greeting + one contextual line driven by a few real states, plus
-// stats that move as you log. (Copy/visual tuning is Step 7.)
+// stats that move as you log. No streaks, no guilt.
 
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useCallback, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import PrimaryButton from '../components/PrimaryButton';
+import { Alert, StyleSheet, View } from 'react-native';
 import ProgramCard from '../components/ProgramCard';
 import StatTile from '../components/StatTile';
-import { colors, screenBottomPadding } from '../components/ScreenContainer';
+import AppText from '../components/primitives/AppText';
+import Button from '../components/primitives/Button';
+import Card from '../components/primitives/Card';
+import FadeIn from '../components/primitives/FadeIn';
+import IconBadge from '../components/primitives/IconBadge';
+import Screen from '../components/primitives/Screen';
 import { RootStackParamList } from '../navigation/types';
+import { spacing } from '../theme';
 import { SessionLogEntry, StoredProgram } from '../types/program';
 import { getProgramName } from '../utils/programHelpers';
-import { deleteProgram, getAllPrograms } from '../utils/storage';
+import { useProgramStore } from '../state/programStore';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -27,6 +30,10 @@ function greeting(): string {
   if (h < 12) return 'Good morning';
   if (h < 18) return 'Good afternoon';
   return 'Good evening';
+}
+
+function todayLabel(): string {
+  return new Date().toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' });
 }
 
 function allEntries(programs: StoredProgram[]): SessionLogEntry[] {
@@ -63,23 +70,11 @@ function contextualLine(programs: StoredProgram[]): string {
 
 export default function HomeScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const [programs, setPrograms] = useState<StoredProgram[]>([]);
-
-  const load = useCallback(async () => {
-    setPrograms(await getAllPrograms());
-  }, []);
-
-  useFocusEffect(
-    useCallback(() => {
-      let active = true;
-      getAllPrograms().then((list) => {
-        if (active) setPrograms(list);
-      });
-      return () => {
-        active = false;
-      };
-    }, [])
-  );
+  // Programs come from the shared store (loaded once at app start), so Home
+  // reflects check-ins and deletes instantly without re-reading storage.
+  const loaded = useProgramStore((st) => st.loaded);
+  const programs = useProgramStore((st) => st.programs);
+  const removeProgram = useProgramStore((st) => st.remove);
 
   const confirmDelete = (program: StoredProgram) => {
     Alert.alert(
@@ -91,117 +86,121 @@ export default function HomeScreen() {
           text: 'Delete',
           style: 'destructive',
           onPress: async () => {
-            await deleteProgram(program.id);
-            await load();
+            await removeProgram(program);
           },
         },
       ]
     );
   };
 
-  const hasPrograms = programs.length > 0;
+  const startNew = () => navigation.navigate('RegionSelect');
+
+  // Render nothing until storage has answered, so the empty state never flashes
+  // before real programs appear.
+  if (!loaded) return <Screen scroll={false}>{null}</Screen>;
+
   const entries = allEntries(programs);
   const thisWeek = sessionsWithin(entries, 7 * DAY_MS);
-  const total = entries.length;
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
-      <ScrollView contentContainerStyle={styles.content}>
-        <Text style={styles.greeting}>{greeting()}</Text>
+    <Screen contentStyle={styles.content}>
+      <FadeIn index={0}>
+        <AppText variant="eyebrow" color="textTertiary">
+          {todayLabel()}
+        </AppText>
+        <AppText variant="display" style={styles.greeting}>
+          {greeting()}
+        </AppText>
+      </FadeIn>
 
-        {hasPrograms ? (
-          <>
-            <Text style={styles.line}>{contextualLine(programs)}</Text>
+      {programs.length > 0 ? (
+        <>
+          <FadeIn index={1}>
+            <AppText color="textSecondary" style={styles.line}>
+              {contextualLine(programs)}
+            </AppText>
+          </FadeIn>
 
-            <View style={styles.stats}>
-              <StatTile value={thisWeek} label="This week" />
-              <StatTile value={total} label="Total sessions" />
-            </View>
+          <FadeIn index={2} style={styles.stats}>
+            <StatTile value={thisWeek} label="Sessions this week" icon="calendar" tone="accent" />
+            <StatTile value={entries.length} label="Sessions in total" icon="trend" tone="lavender" />
+          </FadeIn>
 
-            <Text style={styles.sectionLabel}>Your programs</Text>
-            <View style={styles.list}>
-              {programs.map((program) => (
+          <FadeIn index={3}>
+            <AppText variant="eyebrow" color="textTertiary" style={styles.sectionLabel}>
+              Your programs
+            </AppText>
+          </FadeIn>
+          <View style={styles.list}>
+            {programs.map((program, i) => (
+              <FadeIn key={program.id} index={4 + i}>
                 <ProgramCard
-                  key={program.id}
                   program={program}
                   onPress={() => navigation.navigate('Program', { programId: program.id })}
                   onLongPress={() => confirmDelete(program)}
                 />
-              ))}
-            </View>
-            <Text style={styles.hint}>Long-press a program to delete it.</Text>
+              </FadeIn>
+            ))}
+          </View>
 
-            <View style={styles.newIssue}>
-              <PrimaryButton
-                label="New program"
-                variant="subtle"
-                onPress={() => navigation.navigate('RegionSelect')}
-              />
-            </View>
-          </>
-        ) : (
-          <View style={styles.empty}>
-            <Text style={styles.line}>
+          <FadeIn index={4 + programs.length} style={styles.newProgram}>
+            <Button label="New program" icon="add" variant="secondary" onPress={startNew} />
+            <AppText variant="caption" color="textTertiary" align="center">
+              Tip: long-press a program to delete it.
+            </AppText>
+          </FadeIn>
+        </>
+      ) : (
+        <FadeIn index={1}>
+          <Card style={styles.emptyCard}>
+            <IconBadge name="growth" tone="sage" size={56} />
+            <AppText variant="heading">Let's get you moving again</AppText>
+            <AppText color="textSecondary">
               Regain builds you a staged exercise plan for back or neck pain — an
               exercise companion that meets you where you're starting from.
-            </Text>
-            <PrimaryButton
-              label="Tell us what's bothering you"
-              onPress={() => navigation.navigate('RegionSelect')}
-            />
-          </View>
-        )}
-      </ScrollView>
-    </SafeAreaView>
+            </AppText>
+            <View style={styles.emptyAction}>
+              <Button label="Tell us what's bothering you" onPress={startNew} />
+            </View>
+          </Card>
+        </FadeIn>
+      )}
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
   content: {
-    paddingHorizontal: 24,
-    paddingTop: 28,
-    paddingBottom: screenBottomPadding,
+    paddingTop: spacing.xxl,
   },
   greeting: {
-    color: colors.textPrimary,
-    fontSize: 30,
-    fontWeight: '700',
+    marginTop: spacing.xxs,
   },
   line: {
-    color: colors.textSecondary,
-    fontSize: 16,
-    lineHeight: 23,
-    marginTop: 10,
+    marginTop: spacing.xs,
   },
   stats: {
     flexDirection: 'row',
-    gap: 12,
-    marginTop: 24,
+    gap: spacing.sm,
+    marginTop: spacing.xl,
   },
   sectionLabel: {
-    color: colors.textPrimary,
-    fontSize: 18,
-    fontWeight: '700',
-    marginTop: 32,
-    marginBottom: 14,
+    marginTop: spacing.xxl,
+    marginBottom: spacing.sm,
   },
   list: {
-    gap: 14,
+    gap: spacing.sm,
   },
-  hint: {
-    color: colors.textSecondary,
-    fontSize: 13,
-    marginTop: 12,
+  newProgram: {
+    marginTop: spacing.xl,
+    gap: spacing.sm,
   },
-  newIssue: {
-    marginTop: 28,
+  emptyCard: {
+    marginTop: spacing.xl,
+    gap: spacing.sm,
+    padding: spacing.xl,
   },
-  empty: {
-    marginTop: 4,
-    gap: 24,
+  emptyAction: {
+    marginTop: spacing.sm,
   },
 });

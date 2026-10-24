@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Level unlocked</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;background:#0F0B11}
+*{box-sizing:border-box}
+.scr{width:412px;height:915px;background:radial-gradient(110% 50% at 50% 34%,#2F2119 0%,#161118 62%);color:#F4EDEA;font-family:Figtree,system-ui,sans-serif;position:relative;overflow:hidden;display:flex;flex-direction:column}
+.foot{flex:none;padding:12px 20px 28px;display:flex;flex-direction:column;gap:6px}
+.btn{height:56px;width:100%;border-radius:999px;border:0;font:700 17px/20px Figtree,system-ui,sans-serif;display:flex;align-items:center;justify-content:center;gap:10px;padding:0 24px}
+.bw{background:#F3B486;color:#2E1A0C}
+.rg{position:absolute;left:50%;top:50%;border-radius:999px;transform:translate(-50%,-50%)}
+@keyframes pop{0%{transform:translate(-50%,-50%) scale(.6);opacity:0}60%{transform:translate(-50%,-50%) scale(1.06);opacity:1}100%{transform:translate(-50%,-50%) scale(1)}}
+.a1{animation:pop 1s cubic-bezier(.2,.9,.3,1.2) both}
+.a2{animation:pop 1s cubic-bezier(.2,.9,.3,1.2) .08s both}
+.a3{animation:pop 1s cubic-bezier(.2,.9,.3,1.2) .16s both}
+.dt{position:absolute;border-radius:99px}
+@keyframes drift{0%{opacity:0;transform:translate(0,0)}30%{opacity:1}100%{opacity:.85}}
+.dt{animation:drift 1.2s ease-out .2s both}
+</style>
+</helmet>
+<div class="scr">
+  <div style="height:44px;flex:none"></div>
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:36px;padding:0 28px">
+    <div style="position:relative;width:260px;height:260px" aria-hidden="true">
+      <span class="rg a1" style="width:260px;height:260px;background:rgba(243,180,134,.07)"></span>
+      <span class="rg a2" style="width:184px;height:184px;background:rgba(243,180,134,.13)"></span>
+      <span class="rg a3" style="width:116px;height:116px;background:#F3B486;display:flex;align-items:center;justify-content:center;color:#2E1A0C;font:800 48px/1 Figtree,sans-serif">2</span>
+      <span class="dt" style="left:22px;top:60px;width:10px;height:10px;background:#F3B486"></span>
+      <span class="dt" style="left:224px;top:42px;width:8px;height:8px;background:#B6A5EA"></span>
+      <span class="dt" style="left:240px;top:170px;width:12px;height:12px;background:#F3B486;opacity:.7"></span>
+      <span class="dt" style="left:30px;top:196px;width:8px;height:8px;background:#8DBBDD"></span>
+      <span class="dt" style="left:126px;top:4px;width:7px;height:7px;background:#E2A2BC"></span>
+      <span class="dt" style="left:120px;top:248px;width:9px;height:9px;background:#9CD3B2"></span>
+      <span class="dt" style="left:4px;top:128px;width:6px;height:6px;background:#F4EDEA;opacity:.6"></span>
+      <span class="dt" style="left:250px;top:110px;width:6px;height:6px;background:#F4EDEA;opacity:.6"></span>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center">
+      <p style="margin:0;font:700 15px/20px Figtree,sans-serif;color:#F3B486">Level 2 unlocked</p>
+      <h1 style="margin:0;font:700 34px/40px Figtree,sans-serif;letter-spacing:-0.02em">Activation &amp; Stability</h1>
+      <p style="margin:0;font:400 17px/26px Figtree,sans-serif;color:#C3B7BD">6 new exercises are ready for you.<br>Take the first few sessions gently.</p>
+    </div>
+  </div>
+  <div class="foot">
+    <button class="btn bw">See Level 2</button>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":412,"height":915}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Ready offer</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;background:#0F0B11}
+*{box-sizing:border-box}
+.scr{width:412px;height:915px;background:radial-gradient(120% 55% at 50% -12%,#2A1C2E 0%,#161118 62%);color:#F4EDEA;font-family:Figtree,system-ui,sans-serif;position:relative;overflow:hidden;display:flex;flex-direction:column}
+.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.main{flex:1;min-height:0;padding:72px 24px 0;display:flex;flex-direction:column;gap:24px;overflow:hidden}
+.foot{flex:none;padding:12px 20px 28px;display:flex;flex-direction:column;gap:6px;align-items:center}
+.btn{height:56px;width:100%;border-radius:999px;border:0;font:700 17px/20px Figtree,system-ui,sans-serif;display:flex;align-items:center;justify-content:center;gap:10px;padding:0 24px}
+.bp{background:#9CD3B2;color:#10241A}
+.bq{background:transparent;color:#C3B7BD;height:48px;font-weight:600}
+.cap{font:500 13px/18px Figtree,sans-serif;color:#9A8D95;margin:0}
+.rw{display:flex;align-items:center;gap:12px;padding:10px 0}
+.dot{width:10px;height:10px;border-radius:99px;flex:none}
+</style>
+</helmet>
+<div class="scr">
+  <div style="height:44px;flex:none"></div>
+  <div class="main">
+    <span style="width:72px;height:72px;border-radius:24px;background:rgba(156,211,178,.12);color:#9CD3B2;display:flex;align-items:center;justify-content:center">
+      <svg class="ic" viewBox="0 0 24 24" style="width:32px;height:32px" aria-hidden="true"><path d="m5 12 7-7 7 7"></path><path d="M12 19V5"></path></svg>
+    </span>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <h1 style="margin:0;font:700 34px/40px Figtree,sans-serif;letter-spacing:-0.02em">You're moving well</h1>
+      <p style="margin:0;font:400 17px/26px Figtree,sans-serif;color:#C3B7BD">Your recent sessions have been consistent, comfortable, and feeling easy. Ready to move up to Level 2?</p>
+    </div>
+    <div style="background:#211A24;border-radius:24px;padding:14px 18px;display:flex;flex-direction:column">
+      <p class="cap" style="padding:4px 0 6px">Your last 3 sessions</p>
+      <div class="rw"><span class="dot" style="background:#8DBBDD"></span><span style="flex:1;font:600 15px/20px Figtree,sans-serif">Mon 20 Oct</span><span class="cap" style="color:#C3B7BD">Too easy · no pain after</span></div>
+      <div class="rw"><span class="dot" style="background:#8DBBDD"></span><span style="flex:1;font:600 15px/20px Figtree,sans-serif">Sat 18 Oct</span><span class="cap" style="color:#C3B7BD">Too easy · no pain after</span></div>
+      <div class="rw"><span class="dot" style="background:#B6A5EA"></span><span style="flex:1;font:600 15px/20px Figtree,sans-serif">Thu 16 Oct</span><span class="cap" style="color:#C3B7BD">About right · mild after</span></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4px;padding:0 4px">
+      <p style="margin:0;font:600 15px/20px Figtree,sans-serif">Level 2 · Activation &amp; Stability</p>
+      <p class="cap">Glute Bridge, Bird-Dog, Dead Bug and 3 more</p>
+    </div>
+  </div>
+  <div class="foot">
+    <button class="btn bp">Unlock Level 2</button>
+    <button class="btn bq">Stay here for now</button>
+    <p class="cap">Level 1 stays open either way.</p>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":412,"height":915}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

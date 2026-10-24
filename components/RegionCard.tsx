@@ -1,10 +1,13 @@
-// Large tappable region card for Region Select (Back / Neck).
-// Uses a styled icon + label placeholder for now; real illustrations get
-// sourced later (SCREENS.md permits placeholders). A "coming soon" card is
-// dimmed, shows a badge, and is not pressable.
+// Large tappable region card for Region Select (Back / Neck). Icon badge + label
+// for now; real illustrations can replace the badge later without touching
+// callers. A "coming soon" card is dimmed, badged, and not pressable.
 
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { colors } from './ScreenContainer';
+import { StyleSheet, View } from 'react-native';
+import { colors, radii, spacing } from '../theme';
+import AppText from './primitives/AppText';
+import Card from './primitives/Card';
+import Icon, { IconName } from './primitives/Icon';
+import IconBadge from './primitives/IconBadge';
 
 export default function RegionCard({
   label,
@@ -14,32 +17,36 @@ export default function RegionCard({
   comingSoon = false,
 }: {
   label: string;
-  icon: string;
+  icon: IconName;
   subtitle?: string;
   onPress?: () => void;
   comingSoon?: boolean;
 }) {
   return (
-    <Pressable
+    <Card
       onPress={comingSoon ? undefined : onPress}
-      disabled={comingSoon}
-      style={({ pressed }) => [
-        styles.card,
-        comingSoon && styles.cardDisabled,
-        pressed && !comingSoon && styles.pressed,
-      ]}
+      accessibilityLabel={comingSoon ? `${label}, coming soon` : label}
+      style={[styles.card, comingSoon && styles.dimmed]}
     >
-      <Text style={styles.icon}>{icon}</Text>
+      <IconBadge name={icon} tone={comingSoon ? 'neutral' : 'accent'} size={56} />
       <View style={styles.text}>
-        <Text style={styles.label}>{label}</Text>
-        {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
+        <AppText variant="heading">{label}</AppText>
+        {subtitle ? (
+          <AppText variant="small" color="textSecondary">
+            {subtitle}
+          </AppText>
+        ) : null}
       </View>
       {comingSoon ? (
         <View style={styles.badge}>
-          <Text style={styles.badgeText}>Coming soon</Text>
+          <AppText variant="caption" color="textSecondary">
+            Coming soon
+          </AppText>
         </View>
-      ) : null}
-    </Pressable>
+      ) : (
+        <Icon name="forward" color={colors.textTertiary} />
+      )}
+    </Card>
   );
 }
 
@@ -47,45 +54,20 @@ const styles = StyleSheet.create({
   card: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.surface,
-    borderRadius: 24,
-    paddingVertical: 24,
-    paddingHorizontal: 22,
-    gap: 18,
-    minHeight: 104,
+    gap: spacing.md,
+    minHeight: 100,
   },
-  cardDisabled: {
-    opacity: 0.55,
-  },
-  pressed: {
-    opacity: 0.85,
-  },
-  icon: {
-    fontSize: 40,
+  dimmed: {
+    opacity: 0.6,
   },
   text: {
     flex: 1,
-    gap: 4,
-  },
-  label: {
-    color: colors.textPrimary,
-    fontSize: 22,
-    fontWeight: '700',
-  },
-  subtitle: {
-    color: colors.textSecondary,
-    fontSize: 14,
-    lineHeight: 19,
+    gap: 2,
   },
   badge: {
-    backgroundColor: colors.background,
-    borderRadius: 12,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-  },
-  badgeText: {
-    color: colors.textSecondary,
-    fontSize: 12,
-    fontWeight: '600',
+    backgroundColor: colors.surfaceRaised,
+    borderRadius: radii.pill,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xxs + 1,
   },
 });

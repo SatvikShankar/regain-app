@@ -1,94 +1,99 @@
-// Program-domain helpers: build a stored program from AI output, and derive
-// everything the UI shows (name, level names, level status, looked-up exercises)
-// from raw stored facts + the region's data file. Nothing derived is persisted.
+// Program-domain helpers: build a new program from AI output, and derive
+// everything the UI shows (name, current level, unlocked levels, level status,
+// looked-up exercises) from raw stored facts + the region's data. Nothing
+// derived here is ever persisted.
 
 import { Exercise } from '../types/exercise';
 import { IntakeResult } from '../types/intake';
-import { StoredProgram } from '../types/program';
-import { GeneratedProgram } from './aiAgentCalls';
-import { getRegionProgram } from './programRegistry';
+import { CURRENT_PROGRAM_SCHEMA, StoredProgram } from '../types/program';
+import { GeneratedProgram } from './ai/generateProgram';
+import { exercisesForLevel, getRegion, getRegionContent, getLevelNumbers as regionLevelNumbers } from './regionContent';
 
-const MONTHS = [
-  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-];
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-// Assemble a fresh, unsaved program from the AI result. unlockedLevels is
-// [1..assignedStartLevel] at generation (CLAUDE.md).
+// A fresh program from the AI result. No level events yet: levels 1..start are
+// open by virtue of the assigned start level.
 export function buildProgramFromGenerated(
   region: string,
   intakeResult: IntakeResult,
   generated: GeneratedProgram
 ): StoredProgram {
-  const unlockedLevels: number[] = [];
-  for (let l = 1; l <= generated.assignedStartLevel; l++) unlockedLevels.push(l);
   return {
+    schemaVersion: CURRENT_PROGRAM_SCHEMA,
     id: String(Date.now()),
     region,
     intakeResult,
     assignedStartLevel: generated.assignedStartLevel,
     selectedExercises: generated.selectedExercises,
-    currentLevel: generated.assignedStartLevel,
-    unlockedLevels,
+    levelEvents: [],
     sessionLog: [],
   };
 }
 
-// e.g. "Back Recovery · 27 Jun" — derived from region + generation timestamp.
+export function formatShortDate(d: Date): string {
+  return Number.isNaN(d.getTime()) ? '' : `${d.getDate()} ${MONTHS[d.getMonth()]}`;
+}
+
+// The user's rename if any, else e.g. "Back Recovery · 27 Sep".
 export function getProgramName(program: StoredProgram): string {
-  const region = program.region.charAt(0).toUpperCase() + program.region.slice(1);
-  const d = new Date(Number(program.id));
-  const date = Number.isNaN(d.getTime()) ? '' : ` · ${d.getDate()} ${MONTHS[d.getMonth()]}`;
-  return `${region} Recovery${date}`;
+  if (program.customName?.trim()) return program.customName.trim();
+  const base =
+    getRegionContent(program.region)?.copy.programName ?? getRegion(program.region)?.label ?? 'Program';
+  const date = formatShortDate(new Date(Number(program.id)));
+  return date ? `${base} · ${date}` : base;
 }
 
 export function getLevelNumbers(program: StoredProgram): number[] {
-  const rp = getRegionProgram(program.region);
-  if (!rp) return [];
-  return Object.keys(rp.program)
-    .map(Number)
-    .filter((n) => !Number.isNaN(n))
-    .sort((a, b) => a - b);
+  const content = getRegionContent(program.region);
+  return content ? regionLevelNumbers(content) : [];
 }
 
 export function getLevelName(program: StoredProgram, level: number): string {
-  const rp = getRegionProgram(program.region);
-  return rp?.levelInfo[level]?.name ?? `Level ${level}`;
+  return getRegionContent(program.region)?.levels[level]?.name ?? `Level ${level}`;
 }
 
-export function getMaxUnlockedLevel(program: StoredProgram): number {
-  return program.unlockedLevels.length
-    ? Math.max(...program.unlockedLevels)
-    : program.assignedStartLevel;
+export function getLevelGoal(program: StoredProgram, level: number): string | undefined {
+  return getRegionContent(program.region)?.levels[level]?.goal;
 }
 
-// The user's selected exercises for a level, looked up from the region data and
-// returned in pool order (stable display).
-export function getSelectedExercises(program: StoredProgram, level: number): Exercise[] {
-  const rp = getRegionProgram(program.region);
-  if (!rp) return [];
-  const ids = program.selectedExercises[level] ?? [];
-  return (rp.program[level] ?? []).filter((e) => ids.includes(e.id));
-}
-
-export function findExercise(region: string, exerciseId: string): Exercise | undefined {
-  const rp = getRegionProgram(region);
-  if (!rp) return undefined;
-  for (const level of Object.keys(rp.program)) {
-    const found = rp.program[Number(level)].find((e) => e.id === exerciseId);
-    if (found) return found;
+// The level the user is working on now: the latest level they moved to
+// (unlocked or switched), else where they started.
+export function getWorkingLevel(program: StoredProgram): number {
+  let level = program.assignedStartLevel;
+  for (const e of program.levelEvents) {
+    if (e.type === 'unlocked' || e.type === 'switched') level = e.level;
   }
-  return undefined;
+  return level;
 }
 
-// skipped  = below the assigned start (shown as completed/skipped, still available)
-// unlocked = within the currently-reachable range
-// locked   = beyond what's unlocked (preview only)
+// Every level the user can open: 1..start (start + the skipped ones below it),
+// plus any level they've unlocked since.
+export function getUnlockedLevels(program: StoredProgram): number[] {
+  const open = new Set<number>();
+  for (const l of getLevelNumbers(program)) if (l <= program.assignedStartLevel) open.add(l);
+  for (const e of program.levelEvents) if (e.type === 'unlocked') open.add(e.level);
+  return [...open].sort((a, b) => a - b);
+}
+
+export function getHighestUnlockedLevel(program: StoredProgram): number {
+  return Math.max(program.assignedStartLevel, ...getUnlockedLevels(program));
+}
+
+// The user's selected exercises for a level, in pool order (stable display).
+export function getSelectedExercises(program: StoredProgram, level: number): Exercise[] {
+  const content = getRegionContent(program.region);
+  if (!content) return [];
+  const ids = program.selectedExercises[level] ?? [];
+  return exercisesForLevel(content, level).filter((e) => ids.includes(e.id));
+}
+
+// skipped  = below the assigned start (shown as skipped, still available)
+// unlocked = open to the user (start level and anything unlocked since)
+// locked   = not yet reached (preview only)
 export type LevelStatus = 'skipped' | 'unlocked' | 'locked';
 
 export function getLevelStatus(program: StoredProgram, level: number): LevelStatus {
-  const maxUnlocked = getMaxUnlockedLevel(program);
   if (level < program.assignedStartLevel) return 'skipped';
-  if (level <= maxUnlocked) return 'unlocked';
+  if (getUnlockedLevels(program).includes(level)) return 'unlocked';
   return 'locked';
 }

@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Regain — Flow critique</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;background:#161118}
+*{box-sizing:border-box}
+.n{display:flex;align-items:center;justify-content:center;min-height:52px;padding:0 20px;border-radius:999px;background:#2B2230;color:#F4EDEA;font:600 15px/20px Figtree,system-ui,sans-serif;white-space:nowrap}
+.n.new{background:rgba(156,211,178,.14);color:#9CD3B2;box-shadow:inset 0 0 0 1.5px rgba(156,211,178,.5)}
+.n.sheet{background:#211A24;box-shadow:inset 0 0 0 1.5px #4A3D50;color:#C3B7BD}
+.n.cau{background:rgba(229,203,120,.12);color:#E5CB78}
+.ar{width:28px;height:20px;flex:none;color:#9A8D95}
+.lab{font:600 13px/18px Figtree,sans-serif;color:#9A8D95;width:150px;flex:none}
+.it{display:grid;grid-template-columns:44px minmax(0,1fr);gap:16px;padding:20px 0;border-top:1px solid rgba(255,236,245,.06)}
+.num{width:36px;height:36px;border-radius:12px;background:#2B2230;color:#9CD3B2;font:700 15px/36px Figtree,sans-serif;text-align:center}
+.it h3{margin:0 0 4px;font:600 18px/24px Figtree,sans-serif;color:#F4EDEA}
+.it p{margin:0;font:400 15px/22px Figtree,sans-serif;color:#C3B7BD}
+</style>
+</helmet>
+<div style="width:1280px;min-height:1900px;background:#161118;color:#F4EDEA;font-family:Figtree,system-ui,sans-serif;padding:72px 80px;display:flex;flex-direction:column;gap:48px">
+  <div style="display:flex;flex-direction:column;gap:12px;max-width:880px">
+    <div style="font:600 14px/20px Figtree,sans-serif;color:#9CD3B2">Regain · redesign · 21 Oct 2026</div>
+    <h1 style="margin:0;font:700 48px/56px Figtree,sans-serif;letter-spacing:-0.025em">Flow critique</h1>
+    <p style="margin:0;font:400 18px/28px Figtree,sans-serif;color:#C3B7BD;text-wrap:pretty">Every function in the brief survives. What changes is how many steps the everyday actions take, and where the app shows people what they've already done. Each change below has its reason so it can be weighed before building.</p>
+  </div>
+
+  <div style="display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:56px;align-items:start">
+    <div style="display:flex;flex-direction:column">
+      <div style="font:700 22px/28px Figtree,sans-serif;margin-bottom:8px">Recommended changes</div>
+      <div class="it"><div class="num">1</div><div><h3>Home becomes a dashboard with one-tap logging</h3><p>Logging happens several times a week; Home → Program → Log was three steps for the most frequent action.</p></div></div>
+      <div class="it"><div class="num">2</div><div><h3>Check-in is a bottom sheet, from Home or Program</h3><p>It's three taps of input. A full screen push added weight and an extra back-stack entry.</p></div></div>
+      <div class="it"><div class="num">3</div><div><h3>Preview + Save removed</h3><p>The program saves when generated and lands on Program, nothing auto-started. A first-visit "Redo the questions" covers "this isn't right".</p></div></div>
+      <div class="it"><div class="num">4</div><div><h3>Exercise Detail becomes a sheet; levels expand in place</h3><p>Keeps the user's place in the list and removes a screen from the stack.</p></div></div>
+      <div class="it"><div class="num">5</div><div><h3>No bottom bar yet</h3><p>With two destinations, tabs would be thin. Home gets a settings button; the layout leaves room for a later Today · Progress · Exercises · Ask bar, hidden on immersive screens.</p></div></div>
+      <div class="it"><div class="num">6</div><div><h3>Name on first launch (skippable)</h3><p>Lets Home greet by name. Stays on the phone, no account.</p></div></div>
+      <div class="it"><div class="num">7</div><div><h3>Gentle day (flare-up) sheet</h3><p>Gives "lower levels never disappear" a real everyday use: on a bad day, a short Level 1 set is one tap from Home.</p></div></div>
+      <div class="it"><div class="num">8</div><div><h3>Region as tiles; questions get one calm intro line each where it matters</h3><p>Less form-like, and the warning-sign question is introduced as a routine check instead of arriving out of nowhere.</p></div></div>
+      <div class="it"><div class="num">9</div><div><h3>"How it felt" leads; pain is shown quietly</h3><p>Charting pain closely can make people watch it more. A soft dot strip with a plain sentence reflects it without turning it into a score.</p></div></div>
+      <div class="it"><div class="num">10</div><div><h3>Settings (new, not urgent)</h3><p>Opt-in reminders, export (no accounts means a lost phone loses everything), delete all data, About.</p></div></div>
+      <div class="it"><div class="num">11</div><div><h3>No gym tracking</h3><p>It pulls the app toward "gym", competes with dedicated trackers, and most users aren't lifting. At most, an optional "Also moved today" on the check-in.</p></div></div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:24px">
+      <div style="background:rgba(229,203,120,.10);border-radius:28px;padding:28px;display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;align-items:center;gap:10px;color:#E5CB78;font:700 15px/20px Figtree,sans-serif">
+          <svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+          Found in backIntake.ts: review before building
+        </div>
+        <p style="margin:0;font:400 15px/23px Figtree,sans-serif;color:#E9E0DC">The <b>diagnosed branch never reaches the warning-sign checklist</b>: diagnosisDetail → clearedForExercise → location → aggravating → current pain → COMPLETE. Someone with a diagnosis and new bladder or bowel changes would get a program.</p>
+        <p style="margin:0;font:400 15px/23px Figtree,sans-serif;color:#E9E0DC">Also, "No / not yet" cleared for exercise continues to a program rather than the doctor screen. Worth confirming that's intended with whoever audits the questions.</p>
+      </div>
+      <div style="background:#211A24;border-radius:28px;padding:28px;display:flex;flex-direction:column;gap:14px">
+        <div style="font:700 17px/22px Figtree,sans-serif">Rules for the build (not visible in mockups)</div>
+        <p style="margin:0;font:400 15px/22px Figtree,sans-serif;color:#C3B7BD">• Re-show the warning-sign question when "Significant" pain is logged twice in a row (agreed).</p>
+        <p style="margin:0;font:400 15px/22px Figtree,sans-serif;color:#C3B7BD">• Gentle-day sessions are logged and shown, but don't count toward or against level readiness.</p>
+        <p style="margin:0;font:400 15px/22px Figtree,sans-serif;color:#C3B7BD">• When "Not yet" is re-offered is your call; the design doesn't depend on it.</p>
+        <p style="margin:0;font:400 15px/22px Figtree,sans-serif;color:#C3B7BD">• Questions are presented differently but their wording and order are untouched. Intro lines sit above questions, never inside them.</p>
+      </div>
+      <div style="background:#211A24;border-radius:28px;padding:28px;display:flex;flex-direction:column;gap:10px">
+        <div style="font:700 17px/22px Figtree,sans-serif">How to read this canvas</div>
+        <p style="margin:0;font:400 15px/22px Figtree,sans-serif;color:#C3B7BD">Rows below are journeys. Each phone is 412 × 915, labelled screen number · state. The grey note under each phone covers motion, where taps lead, and what back does.</p>
+        <p style="margin:0;font:400 15px/22px Figtree,sans-serif;color:#C3B7BD">Status-bar (top 44px) and gesture-bar (bottom 24px) areas are left empty on purpose.</p>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:20px">
+    <div style="font:700 22px/28px Figtree,sans-serif">Updated flow</div>
+    <div style="display:flex;gap:16px;font:500 13px/18px Figtree,sans-serif;color:#9A8D95">
+      <span style="display:flex;align-items:center;gap:8px"><span class="n" style="min-height:24px;padding:0 10px;font-size:12px">Screen</span></span>
+      <span style="display:flex;align-items:center;gap:8px"><span class="n sheet" style="min-height:24px;padding:0 10px;font-size:12px">Sheet</span></span>
+      <span style="display:flex;align-items:center;gap:8px"><span class="n new" style="min-height:24px;padding:0 10px;font-size:12px">New</span></span>
+      <span style="display:flex;align-items:center;gap:8px"><span class="n cau" style="min-height:24px;padding:0 10px;font-size:12px">Safety stop</span></span>
+    </div>
+    <div style="background:#1C161F;border-radius:32px;padding:36px;display:flex;flex-direction:column;gap:28px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="lab">First launch</div>
+        <div class="n new">Welcome · name</div>
+        <svg class="ar" viewBox="0 0 28 20" aria-hidden="true"><path d="M2 10h22M18 4l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        <div class="n">Home (empty)</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="lab">New program</div>
+        <div class="n">Home</div>
+        <svg class="ar" viewBox="0 0 28 20" aria-hidden="true"><path d="M2 10h22M18 4l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        <div class="n">Region</div>
+        <svg class="ar" viewBox="0 0 28 20" aria-hidden="true"><path d="M2 10h22M18 4l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        <div class="n">Questions 1–6</div>
+        <svg class="ar" viewBox="0 0 28 20" aria-hidden="true"><path d="M2 10h22M18 4l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="font:500 13px/18px Figtree,sans-serif;color:#9A8D95;width:96px">no signs</span>
+            <div class="n">Generating</div>
+            <svg class="ar" viewBox="0 0 28 20" aria-hidden="true"><path d="M2 10h22M18 4l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            <div class="n">Program · saved</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="font:500 13px/18px Figtree,sans-serif;color:#9A8D95;width:96px">warning sign</span>
+            <div class="n cau">See a doctor</div>
+            <svg class="ar" viewBox="0 0 28 20" aria-hidden="true"><path d="M2 10h22M18 4l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            <div class="n">Home or Region</div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="lab">Everyday</div>
+        <div class="n">Home</div>
+        <svg class="ar" viewBox="0 0 28 20" aria-hidden="true"><path d="M2 10h22M18 4l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        <div class="n sheet">Check-in</div>
+        <svg class="ar" viewBox="0 0 28 20" aria-hidden="true"><path d="M2 10h22M18 4l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        <div class="n">Logged</div>
+        <span style="font:500 13px/18px Figtree,sans-serif;color:#9A8D95">or</span>
+        <div class="n">Ready offer</div>
+        <svg class="ar" viewBox="0 0 28 20" aria-hidden="true"><path d="M2 10h22M18 4l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        <div class="n">Unlocked</div>
+        <svg class="ar" viewBox="0 0 28 20" aria-hidden="true"><path d="M2 10h22M18 4l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        <div class="n">Program</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="lab">Browsing</div>
+        <div class="n">Home</div>
+        <svg class="ar" viewBox="0 0 28 20" aria-hidden="true"><path d="M2 10h22M18 4l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        <div class="n">Program</div>
+        <svg class="ar" viewBox="0 0 28 20" aria-hidden="true"><path d="M2 10h22M18 4l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        <div class="n sheet">Exercise</div>
+        <span style="width:24px"></span>
+        <div class="n">Program</div>
+        <svg class="ar" viewBox="0 0 28 20" aria-hidden="true"><path d="M2 10h22M18 4l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        <div class="n sheet">Check-in</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="lab">Also from Home</div>
+        <div class="n new sheet" style="background:rgba(156,211,178,.08)">Gentle day</div>
+        <div class="n new">Settings</div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1900}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

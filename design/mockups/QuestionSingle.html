@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Question — single choice</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;background:#0F0B11}
+*{box-sizing:border-box}
+.scr{width:412px;height:915px;background:radial-gradient(120% 55% at 50% -12%,#2A1C2E 0%,#161118 62%);color:#F4EDEA;font-family:Figtree,system-ui,sans-serif;position:relative;overflow:hidden;display:flex;flex-direction:column}
+.safe{height:44px;flex:none}
+.hdr{height:56px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 12px;gap:14px}
+.ib{width:44px;height:44px;border-radius:999px;background:#211A24;border:0;color:#F4EDEA;display:flex;align-items:center;justify-content:center;padding:0;flex:none}
+.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.main{flex:1;min-height:0;padding:20px 20px 0;display:flex;flex-direction:column;gap:24px;overflow:hidden}
+.foot{flex:none;padding:12px 20px 28px;display:flex;flex-direction:column;gap:6px}
+.btn{height:56px;width:100%;border-radius:999px;border:0;font:700 17px/20px Figtree,system-ui,sans-serif;display:flex;align-items:center;justify-content:center;gap:10px;padding:0 24px}
+.bx{background:#2B2230;color:#9A8D95}
+.cap{font:500 13px/18px Figtree,sans-serif;color:#9A8D95;margin:0}
+.bar{display:flex;gap:6px}
+.bar i{flex:1;height:6px;border-radius:99px;background:#372C3D}
+.bar i.f{background:#9CD3B2}
+.opt{display:flex;gap:14px;align-items:flex-start;padding:18px;border-radius:22px;background:#211A24;border:0;color:#F4EDEA;text-align:left;width:100%;font:500 16px/22px Figtree,sans-serif}
+.rad{width:22px;height:22px;border-radius:999px;box-shadow:inset 0 0 0 2px #6E6168;flex:none}
+</style>
+</helmet>
+<div class="scr">
+  <div class="safe"></div>
+  <div class="hdr">
+    <button class="ib" aria-label="Previous question"><svg class="ic" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"></path></svg></button>
+    <div style="flex:1;display:flex;flex-direction:column;gap:6px;align-items:center">
+      <div class="bar" style="width:100%"><i class="f" style="opacity:.5"></i><i></i><i></i><i></i><i></i><i></i></div>
+      <span class="cap" style="font-size:12px">1 of 6</span>
+    </div>
+    <button class="ib" aria-label="Quit questions"><svg class="ic" viewBox="0 0 24 24"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
+  </div>
+  <div class="main">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <p class="cap" style="color:#C3B7BD;font-weight:600">A few questions so we start you in the right place.</p>
+      <h1 style="margin:0;font:700 26px/32px Figtree,sans-serif;letter-spacing:-0.015em;text-wrap:pretty">Have you been diagnosed by a doctor or physiotherapist for this issue?</h1>
+    </div>
+    <div role="radiogroup" style="display:flex;flex-direction:column;gap:10px">
+      <button class="opt" role="radio" aria-checked="false"><span class="rad"></span>Yes, I have a diagnosis</button>
+      <button class="opt" role="radio" aria-checked="false"><span class="rad"></span>I've seen someone but don't have a clear diagnosis</button>
+      <button class="opt" role="radio" aria-checked="false"><span class="rad"></span>No, I haven't seen anyone</button>
+    </div>
+  </div>
+  <div class="foot">
+    <button class="btn bx" disabled>Continue</button>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":412,"height":915}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -1,8 +1,8 @@
-// Program — the working hub for one program. ONE screen, two entry modes:
-//   - preview (route.params.previewProgram): a freshly generated, unsaved
-//     program → Save / Redo pinned at the bottom. Nothing is persisted until Save.
-//   - saved (route.params.programId): loaded from storage on focus → "Log
-//     today's session" pinned at the bottom.
+// Program — the working hub for one program (read from the shared store, so
+// check-ins and level changes show instantly). Programs are saved the moment
+// they're generated; on that first visit (`justCreated`) a banner confirms it
+// and offers "Redo the questions" (confirm → delete → Region Select).
+// Back → Home. (Full visual redesign lands in Block 4.)
 //
 // Shows: name, a current-level summary widget (name + goal), light derived
 // stats, and the levels as collapsible sections (tap to reveal exercise names;
@@ -18,11 +18,12 @@ import StatTile from '../components/StatTile';
 import AppText from '../components/primitives/AppText';
 import Button from '../components/primitives/Button';
 import Card from '../components/primitives/Card';
+import Dialog from '../components/primitives/Dialog';
 import FadeIn from '../components/primitives/FadeIn';
 import Icon from '../components/primitives/Icon';
 import Screen from '../components/primitives/Screen';
 import { RootStackParamList } from '../navigation/types';
-import { colors, spacing } from '../theme';
+import { colors, radii, spacing } from '../theme';
 import {
   getLevelGoal,
   getLevelName,
@@ -37,39 +38,28 @@ import { useProgram, useProgramStore } from '../state/programStore';
 export default function ProgramScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const route = useRoute<RouteProp<RootStackParamList, 'Program'>>();
-  const previewProgram = route.params?.previewProgram;
-  const programId = route.params?.programId;
-  const isPreview = !!previewProgram;
-
-  // Saved programs come from the shared store, so check-ins and level changes
-  // show here instantly. A preview (just generated, unsaved) arrives as a param.
-  const savedProgram = useProgram(programId);
-  const saveToStore = useProgramStore((st) => st.save);
-  const program = previewProgram ?? savedProgram ?? null;
+  const { programId, justCreated } = route.params;
+  const program = useProgram(programId) ?? null;
+  const removeProgram = useProgramStore((st) => st.remove);
+  const [redoOpen, setRedoOpen] = useState(false);
 
   // The working level starts expanded; the user's choice is kept after that.
   const [expandedLevel, setExpandedLevel] = useState<number | null>(
     program ? getWorkingLevel(program) : null
   );
 
-  const goHome = () => navigation.navigate('Home');
+  const goHome = () => navigation.popToTop();
 
-  const onSave = async () => {
-    if (!program) return;
-    await saveToStore(program);
-    // Land back on Home (the hub) with the new program showing; drop the intake
-    // flow from the back stack.
-    navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
-  };
-
-  const onRedo = () => {
-    // Discard the unsaved result and start over from region selection.
+  // Delete this just-made program and start the questions again.
+  const onRedo = async () => {
+    setRedoOpen(false);
+    if (program) await removeProgram(program);
     navigation.reset({ index: 1, routes: [{ name: 'Home' }, { name: 'RegionSelect' }] });
   };
 
   if (!program) {
     return (
-      <Screen header={<ScreenHeader onHome={goHome} />}>
+      <Screen header={<ScreenHeader onBack={goHome} backLabel="Back to Home" />}>
         <AppText variant="title">Program not found</AppText>
         <AppText color="textSecondary" style={styles.subtitle}>
           This program may have been deleted.
@@ -84,24 +74,38 @@ export default function ProgramScreen() {
   const goal = getLevelGoal(program, currentLevel);
   const sessionsAtLevel = program.sessionLog.filter((e) => e.level === currentLevel).length;
 
-  const footer = isPreview ? (
-    <>
-      <Button label="Save program" onPress={onSave} />
-      <Button label="Redo intake" variant="ghost" onPress={onRedo} />
-    </>
-  ) : (
+  const footer = (
     <Button
       label="Log today's session"
-      icon="check"
+      icon="add"
       onPress={() => navigation.navigate('CheckIn', { programId: program.id })}
     />
   );
 
   return (
-    <Screen header={!isPreview ? <ScreenHeader onHome={goHome} /> : undefined} footer={footer}>
-      <FadeIn index={0} style={isPreview && styles.previewTop}>
-        <AppText variant="eyebrow" color={isPreview ? 'accent' : 'textTertiary'}>
-          {isPreview ? 'Your new program' : 'Program'}
+    <Screen header={<ScreenHeader onBack={goHome} backLabel="Back to Home" />} footer={footer}>
+      {justCreated ? (
+        <FadeIn index={0} style={styles.banner}>
+          <View style={styles.bannerCheck}>
+            <Icon name="check" size={18} strokeWidth={2.6} color={colors.onPrimary} />
+          </View>
+          <View style={styles.bannerText}>
+            <AppText variant="label">Saved to your programs</AppText>
+            <AppText
+              variant="captionStrong"
+              color="text2"
+              style={styles.redoLink}
+              onPress={() => setRedoOpen(true)}
+              accessibilityRole="button"
+            >
+              Not quite right? Redo the questions
+            </AppText>
+          </View>
+        </FadeIn>
+      ) : null}
+      <FadeIn index={0}>
+        <AppText variant="eyebrow" color={justCreated ? 'primary' : 'textTertiary'}>
+          {justCreated ? 'Your new program' : 'Program'}
         </AppText>
         <AppText variant="title" style={styles.title}>
           {getProgramName(program)}
@@ -111,7 +115,7 @@ export default function ProgramScreen() {
       <FadeIn index={1}>
         <Card variant="accent" style={styles.levelCard}>
           <AppText variant="eyebrow" color="accent">
-            {isPreview ? 'Starting at' : 'Now working on'} · Level {currentLevel}
+            {justCreated ? 'Starting at' : 'Now working on'} · Level {currentLevel}
           </AppText>
           <AppText variant="heading">{getLevelName(program, currentLevel)}</AppText>
           {goal ? (
@@ -122,7 +126,7 @@ export default function ProgramScreen() {
         </Card>
       </FadeIn>
 
-      {!isPreview ? (
+      {!justCreated ? (
         <FadeIn index={2} style={styles.stats}>
           <StatTile value={sessionsAtLevel} label="At this level" icon="target" tone="accent" />
           <StatTile
@@ -169,13 +173,47 @@ export default function ProgramScreen() {
           </FadeIn>
         ))}
       </View>
+
+      <Dialog
+        visible={redoOpen}
+        icon="rename"
+        title="Redo the questions?"
+        body="This program will be deleted and you'll start the questions again."
+        onDismiss={() => setRedoOpen(false)}
+        actions={[
+          { label: 'Delete and redo', variant: 'secondary', onPress: onRedo },
+          { label: 'Keep it', variant: 'primary', onPress: () => setRedoOpen(false) },
+        ]}
+      />
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  previewTop: {
-    paddingTop: spacing.xl,
+  banner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: 14,
+    marginBottom: spacing.md,
+    borderRadius: radii.option,
+    backgroundColor: colors.primarySoft,
+  },
+  bannerCheck: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  bannerText: {
+    flex: 1,
+    gap: 2,
+  },
+  redoLink: {
+    textDecorationLine: 'underline',
   },
   title: {
     marginTop: spacing.xxs,

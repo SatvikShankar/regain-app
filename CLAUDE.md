@@ -13,7 +13,7 @@ Screen-level detail (layout, content, connections, aesthetic) lives in `SCREENS.
 - AsyncStorage for local persistence — no backend, no server, no accounts/auth
 - Testing via Expo Go on Android (Samsung S24+); use Expo SDK 54 — this matches the installed Expo Go version
 - **Anthropic API** for two bounded post-intake calls (see AI Agent Flow): Haiku 5.5 for level classification, Sonnet 5.5 for exercise selection. Called via plain `fetch`, deliberately not the Anthropic SDK (robustness under Metro/React Native). API key in `.env`, which must be in `.gitignore` before the key is ever written. Note: a key in the app bundle is extractable — before distributing an APK, route calls through a small server-side proxy
-- **UI stack**: Reanimated (UI-thread animation), react-native-svg + lucide-react-native (icons, future charts), expo-font + Nunito, expo-haptics. Decisions are made as for a shipped standalone app (EAS/Gradle build), not for Expo Go convenience; Expo Go is only the current test harness
+- **UI stack**: Reanimated (UI-thread animation), react-native-svg + lucide-react-native (icons, future charts), expo-font + Figtree, expo-haptics. Decisions are made as for a shipped standalone app (EAS/Gradle build), not for Expo Go convenience; Expo Go is only the current test harness
 - No local model (would require a de facto backend)
 - If a backend is added later: separate repo (`regain-api`), not a monorepo
 - All navigation must work with Android hardware/gesture back (e.g. back during intake → previous question, not app exit) — wire this deliberately, don't leave default behavior
@@ -42,7 +42,9 @@ regain-app/
 ├── theme/                  → design tokens: colors (palette + semantic + tones), spacing/radii, typography, motion
 ├── screens/                → PascalCase, one screen per file
 ├── components/             → domain UI pieces (ProgramCard, LevelSection, …)
-│   └── primitives/         → base building blocks: Screen, AppText, Card, Button, Chip, Icon, IconBadge, IconButton, PressableScale, FadeIn
+│   ├── primitives/         → base building blocks: Screen (+ ScreenBackground glow), AppText, Card, Button, Chip, SegmentedControl,
+│   │                         TextField, Dialog, Icon, IconBadge, IconButton, PressableScale, FadeIn
+│   └── illustrations/      → region artwork keyed by region id (placeholders, swappable)
 ├── navigation/
 └── utils/
     ├── ai/                 → client.ts (transport, the one file to repoint at a proxy), context.ts (TOON prompt
@@ -177,7 +179,7 @@ After each check-in, in order:
 Gentle sessions never count toward or against moving levels, but DO count for 1 and 4 (pain is pain). All thresholds are named constants at the top of the file; `utils/gating.test.ts` covers every rule.
 
 ## Core user journey
-Home → "+" New Issue → Region Select (Back / Neck-comingsoon) → Intake (branching) → either Red-Flag Detour (informational, ends here) OR Loading → Program → Exercise Detail (on tap) / Check-in (one-tap log → 3 questions) → gating updates → progress reflected on Home & Program.
+Home → Start a new program → Region Select (Back / Neck coming soon) → Questionnaire (branching) → either See-a-doctor (informational, ends here) OR Generating → **program saved automatically** → Program (first visit: "Saved to your programs" + Redo) → Exercise Detail / Check-in → gating → progress reflected on Home & Program. No preview/Save step; no Home button in headers — back from a first-level screen leads Home. Custom dialogs (`primitives/Dialog`) replace the platform alert everywhere.
 
 ## Working with Satvik
 - Comfortable directing product/scope; newer to React Native/Expo and agentic coding tools — explain non-obvious technical choices briefly

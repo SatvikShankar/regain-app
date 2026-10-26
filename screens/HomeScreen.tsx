@@ -8,12 +8,14 @@
 
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Alert, StyleSheet, View } from 'react-native';
+import { useState } from 'react';
+import { StyleSheet, View } from 'react-native';
 import ProgramCard from '../components/ProgramCard';
 import StatTile from '../components/StatTile';
 import AppText from '../components/primitives/AppText';
 import Button from '../components/primitives/Button';
 import Card from '../components/primitives/Card';
+import Dialog from '../components/primitives/Dialog';
 import FadeIn from '../components/primitives/FadeIn';
 import IconBadge from '../components/primitives/IconBadge';
 import Screen from '../components/primitives/Screen';
@@ -76,22 +78,15 @@ export default function HomeScreen() {
   const programs = useProgramStore((st) => st.programs);
   const removeProgram = useProgramStore((st) => st.remove);
 
-  const confirmDelete = (program: StoredProgram) => {
-    Alert.alert(
-      'Delete program?',
-      `"${getProgramName(program)}" will be permanently removed. This can't be undone.`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: async () => {
-            await removeProgram(program);
-          },
-        },
-      ]
-    );
+  // Program awaiting delete confirmation (long-press), if any.
+  const [pendingDelete, setPendingDelete] = useState<StoredProgram | null>(null);
+  const confirmDelete = (program: StoredProgram) => setPendingDelete(program);
+  const doDelete = async () => {
+    const target = pendingDelete;
+    setPendingDelete(null);
+    if (target) await removeProgram(target);
   };
+  const pendingSessions = pendingDelete?.sessionLog.length ?? 0;
 
   const startNew = () => navigation.navigate('RegionSelect');
 
@@ -165,6 +160,21 @@ export default function HomeScreen() {
           </Card>
         </FadeIn>
       )}
+      <Dialog
+        visible={!!pendingDelete}
+        icon="delete"
+        title={`Delete ${pendingDelete ? getProgramName(pendingDelete) : 'program'}?`}
+        body={
+          pendingSessions > 0
+            ? `Its ${pendingSessions} logged session${pendingSessions === 1 ? '' : 's'} go with it. This can't be undone.`
+            : "This can't be undone."
+        }
+        onDismiss={() => setPendingDelete(null)}
+        actions={[
+          { label: 'Delete', variant: 'secondary', onPress: doDelete },
+          { label: 'Keep it', variant: 'primary', onPress: () => setPendingDelete(null) },
+        ]}
+      />
     </Screen>
   );
 }

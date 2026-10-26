@@ -40,7 +40,7 @@ export default function ExerciseDetailScreen() {
   const exercise = findExercise(region, exerciseId);
 
   const header = (
-    <ScreenHeader onBack={() => navigation.goBack()} onHome={() => navigation.navigate('Home')} />
+    <ScreenHeader onBack={() => navigation.goBack()} />
   );
 
   if (!exercise) {

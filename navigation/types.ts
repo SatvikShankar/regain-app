@@ -5,7 +5,6 @@
 // back / Home controls in a shared header. There is no bottom bar / tab navigator.
 
 import { DetourReason, IntakeResult } from "../types/intake";
-import { StoredProgram } from "../types/program";
 
 export type RootStackParamList = {
   Home: undefined;
@@ -16,10 +15,9 @@ export type RootStackParamList = {
   // program is kept), rather than from a new-program questionnaire.
   // items: the warning-sign wording the user ticked, if that's what triggered it.
   RedFlagDetour: { severity: DetourReason; items?: string[]; fromCheckIn?: boolean };
-  // Two ways to open the Program screen:
-  //   - previewProgram: a freshly generated, NOT-yet-saved program (post-intake)
-  //   - programId:      an already-saved program, loaded from storage
-  Program: { programId?: string; previewProgram?: StoredProgram };
+  // justCreated: first visit right after generation — shows the "Saved to your
+  // programs" banner with a Redo option.
+  Program: { programId: string; justCreated?: boolean };
   ExerciseDetail: { exerciseId: string; region: string };
   CheckIn: { programId: string };
 };

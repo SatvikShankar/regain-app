@@ -13,14 +13,14 @@ export type AppTextProps = TextProps & {
 
 export default function AppText({
   variant = 'body',
-  color = 'textPrimary',
+  color = 'text1',
   align,
   style,
   ...rest
 }: AppTextProps) {
   return (
     <Text
-      maxFontSizeMultiplier={1.4} // respect system font scaling without breaking layouts
+      maxFontSizeMultiplier={1.5} // respect system font scaling without breaking layouts
       {...rest}
       style={[styles.base, textVariants[variant], { color: colors[color] }, align && { textAlign: align }, style]}
     />

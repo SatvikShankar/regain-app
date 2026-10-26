@@ -1,20 +1,21 @@
-// The rounded "glassy" surface every widget sits on: a lighter plum layer with a
-// hairline top-light edge and soft shadow instead of hard borders. Pass onPress
-// to make the whole card tappable (with spring press feedback).
+// The rounded surface every widget sits on: a lighter plum layer with a faint
+// top-light edge and soft shadow, never a hard border. Pass onPress to make the
+// whole card tappable (spring press + one step lighter while held).
 
 import { ReactNode } from 'react';
 import { Platform, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
-import { colors, radii, spacing } from '../../theme';
+import { cardPadding, colors, radii } from '../../theme';
 import PressableScale from './PressableScale';
 
-export type CardVariant = 'default' | 'raised' | 'accent' | 'warm' | 'caution';
+export type CardVariant = 'default' | 'raised' | 'primary' | 'caution' | 'warm' | 'accent';
 
 const variantStyle: Record<CardVariant, ViewStyle> = {
-  default: { backgroundColor: colors.surface },
-  raised: { backgroundColor: colors.surfaceRaised },
-  accent: { backgroundColor: colors.accentSoft, borderColor: colors.accentBorder },
-  warm: { backgroundColor: colors.warmSoft },
+  default: { backgroundColor: colors.surface1 },
+  raised: { backgroundColor: colors.surface2 },
+  primary: { backgroundColor: colors.primarySoft },
+  accent: { backgroundColor: colors.primarySoft }, // legacy alias
   caution: { backgroundColor: colors.cautionSoft },
+  warm: { backgroundColor: colors.warmSoft },
 };
 
 export default function Card({
@@ -42,6 +43,7 @@ export default function Card({
         accessibilityRole="button"
         accessibilityLabel={accessibilityLabel}
         style={cardStyle}
+        pressedStyle={variant === 'default' ? styles.pressed : undefined}
       >
         {children}
       </PressableScale>
@@ -53,17 +55,16 @@ export default function Card({
 const styles = StyleSheet.create({
   card: {
     borderRadius: radii.lg,
-    padding: spacing.lg,
+    padding: cardPadding,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.highlight,
+    shadowColor: colors.shadow,
     ...Platform.select({
-      ios: {
-        shadowColor: colors.shadow,
-        shadowOpacity: 0.25,
-        shadowRadius: 16,
-        shadowOffset: { width: 0, height: 8 },
-      },
-      default: {},
+      ios: { shadowOpacity: 0.45, shadowRadius: 22, shadowOffset: { width: 0, height: 14 } },
+      default: { elevation: 6 },
     }),
+  },
+  pressed: {
+    backgroundColor: colors.surface2,
   },
 });

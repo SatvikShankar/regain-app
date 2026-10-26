@@ -1,53 +1,56 @@
-// Uniform top header for every non-Home screen. One consistent pattern:
-//   left  = one step back (previous screen / previous question) — only when the
-//           previous screen is meaningfully different from Home
-//   right = Home ("all roads lead home")
-// Home itself renders no header. Optional small centred title.
+// The top bar for every non-Home screen: 56pt tall, three slots.
+//   left   — back (previous screen / previous question). Back from a first-level
+//            screen leads Home, so there is no separate Home button.
+//   center — optional title (one line) or custom content (e.g. questionnaire progress)
+//   right  — optional action (⋮ options, ✕ quit)
 
+import { ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { screenGutter, spacing } from '../theme';
+import { spacing } from '../theme';
 import AppText from './primitives/AppText';
 import IconButton from './primitives/IconButton';
 
 export default function ScreenHeader({
   onBack,
-  onHome,
+  backLabel = 'Back',
   title,
+  center,
+  right,
 }: {
   onBack?: () => void;
-  onHome?: () => void;
+  backLabel?: string;
   title?: string;
+  center?: ReactNode;
+  right?: ReactNode;
 }) {
   return (
     <View style={styles.row}>
       <View style={styles.side}>
-        {onBack ? <IconButton icon="back" onPress={onBack} accessibilityLabel="Back" /> : null}
+        {onBack ? <IconButton icon="back" onPress={onBack} accessibilityLabel={backLabel} /> : null}
       </View>
       <View style={styles.center}>
-        {title ? (
-          <AppText variant="smallStrong" color="textSecondary" numberOfLines={1}>
-            {title}
-          </AppText>
-        ) : null}
+        {center ??
+          (title ? (
+            <AppText variant="labelLarge" numberOfLines={1}>
+              {title}
+            </AppText>
+          ) : null)}
       </View>
-      <View style={[styles.side, styles.right]}>
-        {onHome ? <IconButton icon="home" onPress={onHome} accessibilityLabel="Home" /> : null}
-      </View>
+      <View style={[styles.side, styles.right]}>{right}</View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   row: {
+    height: 56,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: screenGutter - spacing.xxs,
-    paddingTop: spacing.xs,
-    paddingBottom: spacing.xs,
-    minHeight: 60,
+    paddingHorizontal: spacing.sm,
+    gap: 14,
   },
   side: {
-    width: 48,
+    width: 44,
   },
   right: {
     alignItems: 'flex-end',

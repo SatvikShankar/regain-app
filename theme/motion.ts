@@ -1,23 +1,29 @@
-// Motion tokens. Every animation in the app draws from these so the feel stays
-// consistent and can be tuned in one place. Springs (not linear timing) are the
-// default — they're what makes interactions feel physical and "buttery".
-
-export const durations = {
-  fast: 140,
-  normal: 240,
-  slow: 380,
-};
+// Motion tokens (Reanimated springs). Every animation draws from these so the
+// feel stays consistent and is tuned in one place. Springs, not linear timing,
+// are the default — they're what makes interactions feel physical.
 
 export const springs = {
-  // Press-down/release on tappable surfaces: quick, no wobble.
-  press: { damping: 20, stiffness: 380, mass: 0.6 },
-  // Layout shifts (expanding sections, progress fills): smooth settle.
-  gentle: { damping: 22, stiffness: 180, mass: 0.9 },
-  // Celebratory pops (level unlocked): a touch of bounce.
-  bouncy: { damping: 11, stiffness: 160, mass: 0.8 },
+  // Press-in/out on every tappable (scale to pressScale).
+  press: { stiffness: 400, damping: 18 },
+  // Sheets, dialogs, screen-level moves, question slides, progress fills.
+  standard: { stiffness: 260, damping: 26 },
+  // Level rows, the note field, menus (children stagger by staggerStep).
+  expand: { stiffness: 220, damping: 22 },
+  // Level unlocked ONLY — the one spring allowed to overshoot.
+  celebrate: { stiffness: 180, damping: 14 },
+
+  // ---- Legacy names (pre-redesign components) ----
+  gentle: { stiffness: 220, damping: 22 },
+  bouncy: { stiffness: 180, damping: 14 },
+};
+
+export const durations = {
+  fast: 150,   // fades: scrims, cross-fading status lines
+  normal: 200,
+  slow: 380,   // screen-content entrances
 };
 
 export const pressScale = 0.97;
-
-// Delay between items in a staggered list entrance.
-export const staggerStep = 55;
+export const staggerStep = 40;       // between items in an entrance
+export const childStagger = 25;      // between rows revealed by an expand
+export const questionSlide = 24;     // px a question slides in/out

@@ -112,11 +112,10 @@ export default function CheckInScreen() {
   const [safetyAnswer, setSafetyAnswer] = useState<string[]>([]);
 
   const goToProgram = () => navigation.goBack();
-  const goHome = () => navigation.navigate('Home');
 
   if (!program) {
     return (
-      <Screen header={<ScreenHeader onHome={goHome} />}>
+      <Screen header={<ScreenHeader onBack={() => navigation.goBack()} />}>
         <AppText variant="title">Program not found</AppText>
       </Screen>
     );
@@ -224,7 +223,7 @@ export default function CheckInScreen() {
     ];
     return (
       <Screen
-        header={<ScreenHeader onBack={() => navigation.goBack()} onHome={goHome} />}
+        header={<ScreenHeader onBack={() => navigation.goBack()} />}
         footer={<Button label="Log session" onPress={onSubmit} disabled={!canSubmit} />}
       >
         <FadeIn index={0}>

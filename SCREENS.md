@@ -26,9 +26,10 @@ Reference was a fitness-app Figma template, used for *vibe* only (its auth scree
 
 ## Navigation
 - **Home-centric, NO bottom bar** (decided/built after Step 5; reverses the earlier "persistent bar on every screen" instinct). The app is a single native stack with **Home as the hub** — Home lists all programs and the progress widgets, and is the only place you start a new program ("all roads lead home"). Every other screen is immersive and reached from Home. This is the deliberate move toward a fluid, uncluttered feel.
-- **Unified header** (`components/ScreenHeader`) on every non-Home screen: **left = one step back** (previous screen / previous question) — shown only when the previous screen differs from Home; **right = Home**. Home itself has no header.
-  - Intake's header = back-to-previous-question (left) + quit-to-Home with a confirm (right).
-  - Program (saved), Exercise Detail, Check-in, Region Select carry the header; the preview Program keeps only Save/Redo; the red-flag detour keeps its own Home / Start-over buttons.
+- **Unified header** (`components/ScreenHeader`) on every non-Home screen: **left = back**, centre = optional title/progress, right = optional action (⋮ options, ✕ quit). There is **no Home button**: back from a first-level screen leads Home. Home itself has no back.
+  - Questionnaire header = previous question (left) + progress "N of M" (centre) + ✕ quit with a confirm dialog (right).
+  - There is no preview/Save step: a program is saved when generation finishes and opens on Program with a "Saved to your programs" banner + "Redo the questions" (first visit only). The see-a-doctor screen keeps its own Back to Home / Start over buttons.
+  - Redesign source of truth during the rebuild: `design/HANDOFF.md` (temporary; folded into this file and deleted at the end of Block 5).
 - Must fully support Android hardware/gesture back. Back mid-intake → previous question; back must never unexpectedly exit the app mid-flow.
 - **Screen transitions** (native, set in `navigation/RootNavigator`): horizontal push (`ios_from_right`) by default; Loading and Detour fade (state changes, not places); Check-in slides up (a short task sheet). Native root + `contentStyle` are painted plum so edges never flash white.
 - Header controls are round icon buttons (Lucide via `components/primitives/Icon`).

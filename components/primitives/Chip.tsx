@@ -1,9 +1,9 @@
-// Small selectable pill (check-in answers, filters). Selected = cyan tint +
-// border, same selected language as OptionCard.
+// Small selectable pill (44pt). Selected = sage fill with a check.
 
 import { StyleSheet } from 'react-native';
 import { colors, radii, spacing } from '../../theme';
 import AppText from './AppText';
+import Icon from './Icon';
 import PressableScale from './PressableScale';
 
 export default function Chip({
@@ -20,11 +20,12 @@ export default function Chip({
       onPress={onPress}
       haptic="selection"
       scaleTo={0.94}
-      accessibilityRole="radio"
-      accessibilityState={{ selected }}
+      accessibilityRole="checkbox"
+      accessibilityState={{ checked: selected }}
       style={[styles.chip, selected && styles.selected]}
     >
-      <AppText variant="smallStrong" color={selected ? 'accent' : 'textPrimary'}>
+      {selected ? <Icon name="check" size={16} strokeWidth={2.6} color={colors.onPrimary} /> : null}
+      <AppText variant="label" color={selected ? 'onPrimary' : 'text2'}>
         {label}
       </AppText>
     </PressableScale>
@@ -33,15 +34,15 @@ export default function Chip({
 
 const styles = StyleSheet.create({
   chip: {
-    backgroundColor: colors.surface,
+    minHeight: 44,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
     borderRadius: radii.pill,
-    borderWidth: 1,
-    borderColor: colors.border,
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.lg,
+    paddingHorizontal: spacing.md,
+    backgroundColor: colors.surface2,
   },
   selected: {
-    backgroundColor: colors.accentSoft,
-    borderColor: colors.accentBorder,
+    backgroundColor: colors.primary,
   },
 });

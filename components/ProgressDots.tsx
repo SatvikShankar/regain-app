@@ -1,27 +1,27 @@
-// Intake progress: `total` rounded segments, the first `current` filled cyan.
-// Fills spring in/out on the UI thread (scaleX from the left edge). Total is
-// derived from the branch length (intakeEngine.getBranchLengths) — never hardcoded.
+// Questionnaire progress: `total` rounded segments. Answered ones are sage; the
+// current one is half-strength sage; the rest are empty tracks. Fills spring in
+// on the UI thread. `total` comes from estimateTotalQuestions — never hardcoded.
 
 import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
-import { colors, spacing, springs } from '../theme';
+import { colors, springs } from '../theme';
 
-function Segment({ filled }: { filled: boolean }) {
-  const progress = useSharedValue(filled ? 1 : 0);
+function Segment({ fill }: { fill: 0 | 0.5 | 1 }) {
+  const level = useSharedValue(fill);
   useEffect(() => {
-    progress.value = withSpring(filled ? 1 : 0, springs.gentle);
-  }, [filled, progress]);
-  const fillStyle = useAnimatedStyle(() => ({ transform: [{ scaleX: progress.value }] }));
+    level.value = withSpring(fill, springs.standard);
+  }, [fill, level]);
+  const style = useAnimatedStyle(() => ({ opacity: level.value }));
   return (
     <View style={styles.segment}>
-      <Animated.View style={[styles.fill, fillStyle]} />
+      <Animated.View style={[styles.fill, style]} />
     </View>
   );
 }
 
 export default function ProgressDots({ current, total }: { current: number; total: number }) {
-  const safeTotal = Math.max(total, 1);
+  const safeTotal = Math.max(total, current, 1);
   return (
     <View
       style={styles.row}
@@ -29,7 +29,7 @@ export default function ProgressDots({ current, total }: { current: number; tota
       accessibilityValue={{ min: 0, max: safeTotal, now: current }}
     >
       {Array.from({ length: safeTotal }).map((_, i) => (
-        <Segment key={i} filled={i < current} />
+        <Segment key={i} fill={i < current - 1 ? 1 : i === current - 1 ? 0.5 : 0} />
       ))}
     </View>
   );
@@ -38,19 +38,17 @@ export default function ProgressDots({ current, total }: { current: number; tota
 const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
-    gap: spacing.xs - 2,
+    gap: 6,
   },
   segment: {
     flex: 1,
     height: 6,
     borderRadius: 3,
-    backgroundColor: colors.surfaceRaised,
+    backgroundColor: colors.surface3,
     overflow: 'hidden',
   },
   fill: {
     flex: 1,
-    borderRadius: 3,
-    backgroundColor: colors.accent,
-    transformOrigin: 'left',
+    backgroundColor: colors.primary,
   },
 });

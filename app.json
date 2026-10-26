@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "dark",
-    "backgroundColor": "#1E1420",
+    "backgroundColor": "#161118",
     "newArchEnabled": true,
     "android": {
       "package": "com.regain.app"
@@ -15,7 +15,7 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#1E1420"
+          "backgroundColor": "#161118"
         }
       ]
     ]

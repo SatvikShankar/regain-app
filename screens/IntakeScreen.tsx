@@ -1,32 +1,46 @@
-// Intake — one screen that walks the branching question tree (logic lives in
-// utils/intakeEngine.ts, content in data/intake/*). Renders the current question
-// only; advancing/branching is decided by the engine from the SELECTED OPTION.
+// Intake — one screen that walks the branching question tree (logic in
+// utils/intakeEngine.ts, content in data/regions/<region>/intake.ts). Renders the
+// current question only; where to go next is decided by the engine from the
+// SELECTED OPTIONS (this answer + earlier ones on the current path).
 //
 // Free text is captured per question and carried into the IntakeResult (it
-// becomes context for the AI calls) but never affects branching.
+// becomes context for the AI calls) but never affects routing.
 //
-// Back navigation (on-screen control AND Android hardware back) steps to the
-// previous question with its prior answer restored. On the first question, back
-// leaves intake. Nothing is persisted until COMPLETE.
+// Navigation: back (header or Android back) steps to the previous question with
+// its answer restored; on the first question it returns to Region Select. ✕ asks
+// to confirm, then quits to Home. Nothing is persisted until COMPLETE.
+//
+// Motion: the current question slides 24px out and fades, then the next springs
+// in from the other side (reversed when going back).
 
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Alert, BackHandler, StyleSheet, TextInput, View } from 'react-native';
-import Animated, { FadeInLeft, FadeInRight } from 'react-native-reanimated';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { BackHandler, StyleSheet, View } from 'react-native';
+import Animated, {
+  FadeInDown,
+  LinearTransition,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
+} from 'react-native-reanimated';
 import OptionCard from '../components/OptionCard';
 import ProgressDots from '../components/ProgressDots';
 import ScreenHeader from '../components/ScreenHeader';
 import AppText from '../components/primitives/AppText';
 import Button from '../components/primitives/Button';
+import Dialog from '../components/primitives/Dialog';
+import IconButton from '../components/primitives/IconButton';
 import Screen from '../components/primitives/Screen';
+import TextField from '../components/primitives/TextField';
 import { RootStackParamList } from '../navigation/types';
-import { colors, durations, fonts, radii, screenGutter, spacing } from '../theme';
+import { colors, durations, questionSlide, spacing, springs } from '../theme';
 import { IntakeQuestion, IntakeQuestionResponse } from '../types/intake';
 import {
+  AnswerMap,
   COMPLETE,
   RED_FLAG_DETOUR,
-  AnswerMap,
   SelectedOption,
   buildIntakeResult,
   detectDetour,
@@ -39,6 +53,9 @@ import {
 import { getRegionContent } from '../utils/regionContent';
 
 type Answer = { selectedOption: SelectedOption; freeText: string };
+
+const DEFAULT_NOTE_PLACEHOLDER = "e.g. it's worse after long days at my desk";
+const SLIDE_OUT_MS = 140;
 
 export default function IntakeScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -53,8 +70,7 @@ export default function IntakeScreen() {
   const [currentId, setCurrentId] = useState(startId);
   const [history, setHistory] = useState<string[]>([]); // visited ids, excluding current
   const [answers, setAnswers] = useState<Record<string, Answer>>({});
-  // Which way the question slides in: forward from the right, back from the left.
-  const [direction, setDirection] = useState<'forward' | 'back'>('forward');
+  const [quitOpen, setQuitOpen] = useState(false);
 
   // Local working copy of the current question's answer.
   const [selectedOption, setSelectedOption] = useState<SelectedOption>(null);
@@ -90,15 +106,39 @@ export default function IntakeScreen() {
     [questions, startId, pathAnswers]
   );
 
+  // ---- Question transition ----
+  const shift = useSharedValue(0); // px; 0 = in place
+  const opacity = useSharedValue(1);
+  const transitioning = useRef(false);
+  const contentStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+    transform: [{ translateX: shift.value }],
+  }));
+
+  // Slide the current question out, swap state, then spring the new one in.
+  const transition = (dir: 'forward' | 'back', swap: () => void) => {
+    if (transitioning.current) return;
+    transitioning.current = true;
+    const out = dir === 'forward' ? -questionSlide : questionSlide;
+    shift.value = withTiming(out, { duration: SLIDE_OUT_MS });
+    opacity.value = withTiming(0, { duration: SLIDE_OUT_MS });
+    setTimeout(() => {
+      swap();
+      shift.value = -out;
+      shift.value = withSpring(0, { ...springs.standard, damping: 24 });
+      opacity.value = withTiming(1, { duration: durations.normal });
+      transitioning.current = false;
+    }, SLIDE_OUT_MS);
+  };
+
   // ---- Validation ----
-  const canContinue = (() => {
-    if (!question) return false;
-    if (question.type === 'freeTextOnly') return freeText.trim().length > 0;
-    if (question.type === 'multiSelect') {
-      return Array.isArray(selectedOption) && selectedOption.length > 0;
-    }
-    return selectedOption != null; // singleSelect
-  })();
+  const isChoice = question?.type !== 'freeTextOnly';
+  const hasChoice = Array.isArray(selectedOption) ? selectedOption.length > 0 : selectedOption != null;
+  const canContinue = question
+    ? question.type === 'freeTextOnly'
+      ? freeText.trim().length > 0
+      : hasChoice
+    : false;
 
   // ---- Selection handlers ----
   const selectSingle = (optionId: string) => setSelectedOption(optionId);
@@ -107,7 +147,6 @@ export default function IntakeScreen() {
     const opt = question.options?.find((o) => o.id === optionId);
     if (!opt) return;
     const current = Array.isArray(selectedOption) ? selectedOption : [];
-
     if (isExclusiveOption(opt)) {
       // "None of the above" — selecting it clears everything else.
       setSelectedOption(current.includes(optionId) ? [] : [optionId]);
@@ -127,7 +166,7 @@ export default function IntakeScreen() {
 
   // ---- Advance ----
   const onContinue = () => {
-    if (!canContinue) return;
+    if (!canContinue || transitioning.current) return;
     const updated: Record<string, Answer> = {
       ...answers,
       [currentId]: { selectedOption, freeText },
@@ -139,9 +178,13 @@ export default function IntakeScreen() {
     if (next === RED_FLAG_DETOUR) {
       const reason = detectDetour(question, selectedOption, pathAnswers) ?? 'standard';
       if (__DEV__) console.log('[Regain] detour →', reason);
-      navigation.navigate('RedFlagDetour', {
-        severity: reason,
-        items: detourItems(question, selectedOption),
+      // Replace the questionnaire: back from the doctor screen goes Home.
+      navigation.reset({
+        index: 1,
+        routes: [
+          { name: 'Home' },
+          { name: 'RedFlagDetour', params: { severity: reason, items: detourItems(question, selectedOption) } },
+        ],
       });
       return;
     }
@@ -157,41 +200,31 @@ export default function IntakeScreen() {
         };
       });
       const result = buildIntakeResult(region, questions, responses);
-      if (__DEV__) {
-        // Visible in the `npm start` terminal — the full IntakeResult that gets
-        // serialized as context for the AI calls.
-        console.log('[Regain] IntakeResult:', JSON.stringify(result, null, 2));
-      }
+      if (__DEV__) console.log('[Regain] IntakeResult:', JSON.stringify(result, null, 2));
       navigation.navigate('Loading', { intakeResult: result });
       return;
     }
 
-    setDirection('forward');
-    setHistory((h) => [...h, currentId]);
-    setCurrentId(next);
+    transition('forward', () => {
+      setHistory((h) => [...h, currentId]);
+      setCurrentId(next);
+    });
   };
 
-  // ---- Back (shared by the on-screen control and Android hardware back) ----
+  // ---- Back (shared by the header control and Android back) ----
   const goToPrevious = useCallback(() => {
     if (history.length === 0) return false;
     const prev = history[history.length - 1];
-    setDirection('back');
-    setHistory((h) => h.slice(0, -1));
-    setCurrentId(prev);
+    transition('back', () => {
+      setHistory((h) => h.slice(0, -1));
+      setCurrentId(prev);
+    });
     return true;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [history]);
 
   const onBackPress = () => {
     if (!goToPrevious()) navigation.goBack();
-  };
-
-  // Quit the whole intake and return Home, discarding answers. Nothing is saved
-  // until COMPLETE, so there's nothing to clean up.
-  const confirmQuit = () => {
-    Alert.alert('Quit intake?', "Your answers won't be saved.", [
-      { text: 'Keep going', style: 'cancel' },
-      { text: 'Quit', style: 'destructive', onPress: () => navigation.navigate('Home') },
-    ]);
   };
 
   useEffect(() => {
@@ -199,129 +232,168 @@ export default function IntakeScreen() {
     return () => sub.remove();
   }, [goToPrevious]);
 
+  // Quit the whole questionnaire, discarding answers (nothing was saved).
+  const quit = () => {
+    setQuitOpen(false);
+    navigation.popToTop();
+  };
+
   if (!question) return null;
 
-  const showFreeText = question.type === 'freeTextOnly' || !question.disableFreeText;
-  const freeTextPlaceholder =
-    question.freeTextPlaceholder ??
-    (question.type === 'freeTextOnly'
-      ? 'Type your answer here'
-      : 'Anything else you’d like to add? (optional)');
-
-  const entering = (direction === 'forward' ? FadeInRight : FadeInLeft).duration(durations.normal);
+  const showNote = question.type === 'singleSelect' && !question.disableFreeText;
+  const notePlaceholder = question.freeTextPlaceholder ?? DEFAULT_NOTE_PLACEHOLDER;
+  const isMulti = question.type === 'multiSelect';
+  const regularOptions = question.options?.filter((o) => !o.exclusive) ?? [];
+  const exclusiveOptions = question.options?.filter((o) => o.exclusive) ?? [];
+  const isSelected = (id: string) =>
+    isMulti ? Array.isArray(selectedOption) && selectedOption.includes(id) : selectedOption === id;
+  const renderOption = (id: string, label: string) => (
+    <OptionCard
+      key={id}
+      label={label}
+      selected={isSelected(id)}
+      mode={isMulti ? 'multi' : 'single'}
+      compact={isMulti}
+      onPress={() => (isMulti ? toggleMulti(id) : selectSingle(id))}
+    />
+  );
 
   return (
     <Screen
       keyboardAware
       header={
-        <>
-          <ScreenHeader onBack={onBackPress} onHome={confirmQuit} />
-          <View style={styles.progressRow}>
-            <ProgressDots current={path.length} total={total} />
-          </View>
-        </>
+        <ScreenHeader
+          onBack={onBackPress}
+          backLabel="Previous question"
+          center={
+            <View style={styles.progress}>
+              <ProgressDots current={path.length} total={total} />
+              <AppText variant="micro" color="text3">
+                {path.length} of {Math.max(total, path.length)}
+              </AppText>
+            </View>
+          }
+          right={<IconButton icon="close" onPress={() => setQuitOpen(true)} accessibilityLabel="Quit questions" />}
+        />
       }
       footer={<Button label="Continue" onPress={onContinue} disabled={!canContinue} />}
       contentStyle={styles.content}
     >
-      <Animated.View key={currentId} entering={entering}>
-        {question.introText ? (
-          <AppText variant="smallStrong" color="textSecondary" style={styles.intro}>
-            {question.introText}
-          </AppText>
-        ) : null}
-        <AppText variant="eyebrow" color="textTertiary">
-          Question {path.length} of {Math.max(total, path.length)}
-        </AppText>
-        <AppText variant="title" style={styles.questionText}>
-          {question.questionText}
-        </AppText>
+      <Animated.View style={contentStyle}>
+        <View style={styles.heading}>
+          {question.introText ? (
+            <AppText variant="captionStrong" color="text2">
+              {question.introText}
+            </AppText>
+          ) : null}
+          <AppText variant="title">{question.questionText}</AppText>
+          {isMulti ? (
+            <AppText variant="caption" color="text3">
+              Tick any that apply.
+            </AppText>
+          ) : null}
+        </View>
 
-        {question.type === 'multiSelect' ? (
-          <AppText variant="small" color="textSecondary" style={styles.hint}>
-            Select all that apply.
-          </AppText>
-        ) : null}
-
-        {question.type !== 'freeTextOnly' ? (
-          <View style={styles.options}>
-            {question.options?.map((opt) => {
-              const isSelected =
-                question.type === 'multiSelect'
-                  ? Array.isArray(selectedOption) && selectedOption.includes(opt.id)
-                  : selectedOption === opt.id;
-              return (
-                <OptionCard
-                  key={opt.id}
-                  label={opt.label}
-                  selected={isSelected}
-                  mode={question.type === 'multiSelect' ? 'multi' : 'single'}
-                  onPress={() =>
-                    question.type === 'multiSelect' ? toggleMulti(opt.id) : selectSingle(opt.id)
-                  }
-                />
-              );
-            })}
+        {isChoice ? (
+          <View style={isMulti ? styles.checklist : styles.options} accessibilityRole={isMulti ? undefined : 'radiogroup'}>
+            {regularOptions.map((o) => renderOption(o.id, o.label))}
+            {exclusiveOptions.length ? <View style={styles.divider} /> : null}
+            {exclusiveOptions.map((o) => renderOption(o.id, o.label))}
           </View>
-        ) : null}
+        ) : (
+          <View style={styles.freeTextOnly}>
+            <TextField
+              size="large"
+              multiline
+              value={freeText}
+              onChangeText={setFreeText}
+              accessibilityLabel={question.questionText}
+            />
+            {question.freeTextPlaceholder ? (
+              <AppText variant="caption" color="text3" style={styles.hint}>
+                {question.freeTextPlaceholder} Your own words are fine.
+              </AppText>
+            ) : null}
+          </View>
+        )}
 
-        {showFreeText ? (
-          <TextInput
-            style={[styles.freeText, question.type === 'freeTextOnly' && styles.freeTextOnly]}
-            value={freeText}
-            onChangeText={setFreeText}
-            placeholder={freeTextPlaceholder}
-            placeholderTextColor={colors.textTertiary}
-            selectionColor={colors.accent}
-            cursorColor={colors.accent}
-            maxFontSizeMultiplier={1.4}
-            multiline
-          />
+        {showNote && hasChoice ? (
+          <Animated.View
+            entering={FadeInDown.springify().stiffness(springs.expand.stiffness).damping(springs.expand.damping)}
+            layout={LinearTransition.springify().stiffness(springs.expand.stiffness).damping(springs.expand.damping)}
+            style={styles.note}
+          >
+            <View style={styles.noteLabel}>
+              <AppText variant="label">Anything else you'd like to add?</AppText>
+              <AppText variant="caption" color="text3">
+                Optional
+              </AppText>
+            </View>
+            <TextField
+              multiline
+              value={freeText}
+              onChangeText={setFreeText}
+              placeholder={notePlaceholder}
+              accessibilityLabel="Anything else you'd like to add? Optional"
+            />
+          </Animated.View>
         ) : null}
       </Animated.View>
+
+      <Dialog
+        visible={quitOpen}
+        icon="close"
+        title="Leave the questions?"
+        body="Your answers so far won't be kept."
+        onDismiss={() => setQuitOpen(false)}
+        actions={[
+          { label: 'Leave', variant: 'secondary', onPress: quit },
+          { label: 'Keep going', variant: 'primary', onPress: () => setQuitOpen(false) },
+        ]}
+      />
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  progressRow: {
-    paddingHorizontal: screenGutter,
-    paddingBottom: spacing.xs,
+  progress: {
+    width: '100%',
+    alignItems: 'center',
+    gap: 6,
   },
   content: {
     paddingTop: spacing.lg,
   },
-  intro: {
-    marginBottom: spacing.sm,
-  },
-  questionText: {
-    marginTop: spacing.xs,
+  heading: {
+    gap: 10,
     marginBottom: spacing.xl,
   },
-  hint: {
-    marginTop: -spacing.md,
-    marginBottom: spacing.md,
-  },
   options: {
-    gap: spacing.sm,
+    gap: 10,
   },
-  freeText: {
-    backgroundColor: colors.surface,
-    borderRadius: radii.md,
-    borderWidth: 1,
-    borderColor: colors.border,
-    paddingHorizontal: spacing.md,
-    paddingTop: spacing.md,
-    paddingBottom: spacing.md,
-    color: colors.textPrimary,
-    fontFamily: fonts.regular,
-    fontSize: 16,
-    minHeight: 56,
-    marginTop: spacing.md,
+  checklist: {
+    gap: spacing.xs,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: colors.divider,
+    marginVertical: spacing.xxs,
+    marginHorizontal: spacing.xs,
   },
   freeTextOnly: {
-    minHeight: 140,
-    textAlignVertical: 'top',
-    marginTop: 0,
+    gap: 10,
+  },
+  hint: {
+    paddingHorizontal: spacing.xxs,
+  },
+  note: {
+    marginTop: spacing.xl,
+    gap: spacing.xs,
+  },
+  noteLabel: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'baseline',
+    paddingHorizontal: spacing.xxs,
   },
 });

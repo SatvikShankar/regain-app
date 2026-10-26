@@ -1,73 +1,80 @@
-// Large tappable region card for Region Select (Back / Neck). Icon badge + label
-// for now; real illustrations can replace the badge later without touching
-// callers. A "coming soon" card is dimmed, badged, and not pressable.
+// A region tile for Region Select: artwork on a tinted panel, then the name and
+// a one-line description. Built for a 2-column grid so more regions just add
+// tiles. A "coming soon" tile is dimmed, badged and not tappable.
 
 import { StyleSheet, View } from 'react-native';
+import { RegionInfo } from '../types/region';
 import { colors, radii, spacing } from '../theme';
+import { regionArt } from './illustrations';
 import AppText from './primitives/AppText';
 import Card from './primitives/Card';
-import Icon, { IconName } from './primitives/Icon';
-import IconBadge from './primitives/IconBadge';
+import Icon from './primitives/Icon';
 
-export default function RegionCard({
-  label,
-  icon,
-  subtitle,
-  onPress,
-  comingSoon = false,
-}: {
-  label: string;
-  icon: IconName;
-  subtitle?: string;
-  onPress?: () => void;
-  comingSoon?: boolean;
-}) {
+export default function RegionCard({ region, onPress }: { region: RegionInfo; onPress: () => void }) {
+  const art = regionArt[region.id];
+  const comingSoon = !region.available;
   return (
     <Card
       onPress={comingSoon ? undefined : onPress}
-      accessibilityLabel={comingSoon ? `${label}, coming soon` : label}
-      style={[styles.card, comingSoon && styles.dimmed]}
+      accessibilityLabel={comingSoon ? `${region.label}, coming soon` : region.label}
+      style={[styles.tile, comingSoon && styles.dimmed]}
     >
-      <IconBadge name={icon} tone={comingSoon ? 'neutral' : 'accent'} size={56} />
-      <View style={styles.text}>
-        <AppText variant="heading">{label}</AppText>
-        {subtitle ? (
-          <AppText variant="small" color="textSecondary">
-            {subtitle}
-          </AppText>
+      <View style={[styles.art, { backgroundColor: art?.tileTint ?? colors.surface2 }]}>
+        {art ? <art.Art /> : <Icon name={region.icon} size={48} color={colors.text2} />}
+      </View>
+      <View style={styles.nameRow}>
+        <AppText variant="heading" style={styles.name}>
+          {region.label}
+        </AppText>
+        {comingSoon ? (
+          <View style={styles.badge}>
+            <AppText variant="micro" color="text2">
+              Coming soon
+            </AppText>
+          </View>
         ) : null}
       </View>
-      {comingSoon ? (
-        <View style={styles.badge}>
-          <AppText variant="caption" color="textSecondary">
-            Coming soon
-          </AppText>
-        </View>
-      ) : (
-        <Icon name="forward" color={colors.textTertiary} />
-      )}
+      <AppText variant="caption" color="text2" style={styles.desc}>
+        {region.subtitle}
+      </AppText>
     </Card>
   );
 }
 
 const styles = StyleSheet.create({
-  card: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    minHeight: 100,
+  tile: {
+    flex: 1,
+    padding: 10,
+    paddingBottom: 18,
+    gap: 14,
   },
   dimmed: {
-    opacity: 0.6,
+    opacity: 0.55,
   },
-  text: {
-    flex: 1,
-    gap: 2,
+  art: {
+    height: 132,
+    borderRadius: radii.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  nameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: spacing.xs,
+  },
+  name: {
+    fontFamily: 'Figtree_700Bold',
   },
   badge: {
-    backgroundColor: colors.surfaceRaised,
-    borderRadius: radii.pill,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xxs + 1,
+    backgroundColor: colors.surface2,
+    borderRadius: 8,
+    paddingHorizontal: spacing.xs,
+    paddingVertical: 4,
+  },
+  desc: {
+    paddingHorizontal: spacing.xs,
+    fontSize: 14,
+    lineHeight: 20,
   },
 });

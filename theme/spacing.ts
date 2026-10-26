@@ -1,5 +1,5 @@
-// Spacing + shape tokens. A small fixed scale keeps rhythm consistent; screens
-// pick from it instead of inventing numbers.
+// Spacing + shape tokens. A fixed scale keeps rhythm consistent; screens pick
+// from it instead of inventing numbers.
 
 export const spacing = {
   xxs: 4,
@@ -9,17 +9,23 @@ export const spacing = {
   lg: 20,
   xl: 24,
   xxl: 32,
-  xxxl: 44,
+  xxxl: 40,
+  huge: 56,
 };
 
-// Horizontal gutter for every screen.
-export const screenGutter = spacing.xl;
+export const screenGutter = 20;   // horizontal padding of every screen
+export const cardPadding = 20;
+export const cardGap = 12;        // between cards
+export const sectionGap = 32;     // between sections
+export const touchTarget = 44;    // minimum tappable size
 
-// Fully rounded everywhere (SCREENS.md) — no sharp corners by default.
+// Fully rounded everywhere — no sharp corners by default.
 export const radii = {
-  sm: 12,
-  md: 18,
-  lg: 24,
-  xl: 30,
-  pill: 999,
+  xs: 10,       // tags
+  sm: 14,       // small icon tiles, level number tiles
+  md: 20,       // inputs, rows
+  option: 22,   // option cards
+  lg: 28,       // cards
+  xl: 36,       // sheet tops
+  pill: 999,    // buttons, chips, icon buttons
 };

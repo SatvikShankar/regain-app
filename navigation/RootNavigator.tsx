@@ -34,7 +34,7 @@ export default function RootNavigator() {
       <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="RegionSelect" component={RegionSelectScreen} />
       <Stack.Screen name="Intake" component={IntakeScreen} />
-      <Stack.Screen name="Loading" component={LoadingScreen} options={{ animation: 'fade' }} />
+      <Stack.Screen name="Loading" component={LoadingScreen} options={{ animation: 'fade', gestureEnabled: false }} />
       <Stack.Screen name="RedFlagDetour" component={RedFlagDetourScreen} options={{ animation: 'fade' }} />
       <Stack.Screen name="Program" component={ProgramScreen} />
       <Stack.Screen name="ExerciseDetail" component={ExerciseDetailScreen} />
